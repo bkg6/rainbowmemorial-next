@@ -1,27 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,400..700;1,400..700&family=Caveat:wght@400..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-background: #FAF6EF;
+  --color-background-alt: #F4EEE4;
+  --color-surface: #FFFFFF;
+
+  --color-text-primary: #2A1F18;
+  --color-text-secondary: #7A6A5C;
+  --color-text-tertiary: #A89B8B;
+
+  --color-accent-primary: #C97B63;
+  --color-accent-primary-hover: #B86850;
+  --color-accent-primary-light: #FAE8E1;
+
+  --color-accent-secondary: #9DB89F;
+  --color-accent-secondary-light: #EAF1EB;
+
+  --color-accent-warmth: #D4A574;
+  --color-accent-warmth-light: #FBF2E5;
+
+  --color-accent-soft: #E8C4B8;
+
+  --color-border: #EDE3D5;
+  --color-border-focus: #C97B63;
+  --color-error: #C8786E;
+  --color-error-light: #FCE9E5;
+
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-document: 'Lora', serif;
+  --font-handwriting: 'Caveat', cursive;
+
+  --radius: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--color-border);
+    outline-color: var(--color-accent-primary);
   }
-}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
+  body {
+    font-family: var(--font-body);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    line-height: 1.65;
+  }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  h1 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    font-family: var(--font-body);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  p {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
   }
 }
