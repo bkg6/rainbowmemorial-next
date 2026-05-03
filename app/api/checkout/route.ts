@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { razorpay } from "@/lib/razorpay";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,20 +23,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
+    const currency = process.env.RAZORPAY_CURRENCY ?? "USD";
+    const amount = Number(process.env.RAZORPAY_AMOUNT ?? "2499");
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price: process.env.STRIPE_PRICE_ID,
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${appUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${appUrl}/create?name=${encodeURIComponent(petName)}&died=${diedDate}`,
-      metadata: {
+    const safePetName = String(petName).slice(0, 20).replace(/[^a-zA-Z0-9]/g, "");
+    const receipt = `pet_${safePetName}_${Date.now()}`.slice(0, 40);
+
+    const order = await razorpay.orders.create({
+      amount,
+      currency,
+      receipt,
+      notes: {
         petName,
         bornDate: bornDate ?? "",
         diedDate,
@@ -43,11 +42,14 @@ export async function POST(req: NextRequest) {
         originalPhotoUrl,
         croppedPhotoUrl,
       },
-      customer_email: undefined,
-      billing_address_collection: "auto",
     });
 
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({
+      orderId: order.id,
+      amount: order.amount,
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID,
+    });
   } catch (err) {
     console.error("Checkout error:", err);
     return NextResponse.json({ error: "Checkout failed" }, { status: 500 });

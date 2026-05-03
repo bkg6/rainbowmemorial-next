@@ -10,7 +10,33 @@ import { PawPrint } from "@/components/illustrations/PawPrint";
 import { TEMPLATES as TEMPLATE_CONFIG } from "@/lib/templates";
 import type { TemplateId } from "@/lib/templates";
 
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+  }
+}
+
+type RazorpayResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayOptions = {
+  key: string;
+  amount: number | string;
+  currency: string;
+  order_id: string;
+  name: string;
+  description?: string;
+  prefill?: { email?: string; name?: string };
+  theme?: { color?: string };
+  handler: (response: RazorpayResponse) => void;
+  modal?: { ondismiss?: () => void };
+};
+
 const TEMPLATE_OPTIONS: { id: TemplateId; label: string; image: string }[] = [
+  { id: "classic", label: "Classic", image: "/templates/classic.png" },
   { id: "rainbow_bridge", label: "Rainbow Bridge", image: "/templates/rainbow_bridge.png" },
   { id: "anniversary", label: "Anniversary", image: "/templates/anniversary.png" },
   { id: "birthday_heaven", label: "Birthday in Heaven", image: "/templates/birthday_heaven.png" },
@@ -92,13 +118,29 @@ function PreviewCanvas({
       ? diedYear
       : "____ — ____";
 
-  // Photo top = 560/1920 = 29.2% (Story). For Square, scale because the canvas is cropped tighter.
-  // Square format crops the canvas to 1:1 — render content with same proportions but slightly tighter spacing.
-  const photoTopPct = format === "story" ? "29%" : "20%";
-  const photoSizePct = format === "story" ? "35%" : "40%";
-  const nameTopPct = format === "story" ? "55%" : "62%";
-  const datesTopPct = format === "story" ? "59%" : "70%";
-  const tributeTopPct = format === "story" ? "63%" : "76%";
+  // Derive Story coordinates directly from the template config (1080x1920 canvas).
+  // For Square format we shift everything up ~10% since the canvas crops shorter.
+  const W = tpl.canvasWidth;
+  const H = tpl.canvasHeight;
+  const photoCenterY = tpl.photoZone.y + tpl.photoZone.height / 2;
+  const photoSizeRatio = tpl.photoZone.width / W;
+  const photoTopRatio = tpl.photoZone.y / H;
+  const nameTopRatio = tpl.nameZone.y / H;
+  const datesTopRatio = tpl.datesZone.y / H;
+  const tributeTopRatio = tpl.tributeZone.y / H;
+
+  // Square format: shrink everything proportionally and shift up so the
+  // memorial centers properly in a 1:1 frame.
+  const squareScale = format === "square" ? 0.78 : 1;
+  const squareShift = format === "square" ? -0.06 : 0;
+
+  const photoTopPct = `${(photoTopRatio + squareShift) * 100}%`;
+  const photoSizePct = `${photoSizeRatio * 100}%`;
+  const nameTopPct = `${(nameTopRatio * squareScale + squareShift) * 100}%`;
+  const datesTopPct = `${(datesTopRatio * squareScale + squareShift) * 100}%`;
+  const tributeTopPct = `${(tributeTopRatio * squareScale + squareShift) * 100}%`;
+  // Suppress unused warnings — photoCenterY is computed for clarity but unused
+  void photoCenterY;
 
   return (
     <div
@@ -184,7 +226,7 @@ export default function CreatorPage() {
     diedDate: "",
     tributeLine: "",
   });
-  const [selectedTemplate, setSelectedTemplate] = useState<TemplateId>("rainbow_bridge");
+  const [selectedTemplate, setSelectedTemplate] = useState<TemplateId>("classic");
   const [selectedFormat, setSelectedFormat] = useState<"story" | "square">("story");
 
   const [uploading, setUploading] = useState(false);
@@ -202,6 +244,34 @@ export default function CreatorPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Lazily load Razorpay checkout SDK and resolve when ready
+  const loadRazorpay = useCallback((): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      if (typeof window === "undefined") return reject(new Error("no window"));
+      if (window.Razorpay) return resolve();
+      const existing = document.querySelector<HTMLScriptElement>(
+        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+      );
+      if (existing) {
+        if (window.Razorpay) return resolve();
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("razorpay load failed")));
+        return;
+      }
+      const s = document.createElement("script");
+      s.src = "https://checkout.razorpay.com/v1/checkout.js";
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("razorpay load failed"));
+      document.body.appendChild(s);
+    });
+  }, []);
+
+  // Pre-warm the SDK on mount; not required for correctness, just avoids the click delay
+  useEffect(() => {
+    loadRazorpay().catch(() => {});
+  }, [loadRazorpay]);
+
   // TEMP: visual verification helper — open /create?demo=template_id to render State 2 with a sample
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -218,7 +288,7 @@ export default function CreatorPage() {
         diedDate: "2024-09-30",
         tributeLine: "The best friend I ever had",
       });
-      if (["rainbow_bridge", "anniversary", "birthday_heaven", "memory"].includes(demo)) {
+      if (["classic", "rainbow_bridge", "anniversary", "birthday_heaven", "memory"].includes(demo)) {
         setSelectedTemplate(demo as TemplateId);
       }
     }
@@ -335,6 +405,11 @@ export default function CreatorPage() {
     if (!originalPhotoUrl || !croppedPhotoUrl || !form.petName || !form.diedDate) return;
     setSubmitting(true);
     try {
+      await loadRazorpay();
+      if (!window.Razorpay) {
+        setSubmitting(false);
+        return;
+      }
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -349,12 +424,48 @@ export default function CreatorPage() {
         }),
       });
       const data = await res.json();
-      if (data.url) {
-        localStorage.setItem("selectedFormat", selectedFormat);
-        window.location.href = data.url;
-      } else {
+      if (!data.orderId || !data.keyId) {
         setSubmitting(false);
+        return;
       }
+
+      localStorage.setItem("selectedFormat", selectedFormat);
+
+      const rzp = new window.Razorpay({
+        key: data.keyId,
+        amount: data.amount,
+        currency: data.currency,
+        order_id: data.orderId,
+        name: "Rainbow Memorial",
+        description: `Memorial tribute for ${form.petName}`,
+        prefill: { name: form.petName },
+        theme: { color: "#C97B63" },
+        modal: {
+          ondismiss: () => setSubmitting(false),
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch("/api/webhook/razorpay", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyData.slug) {
+              window.location.href = `/success?slug=${verifyData.slug}`;
+            } else {
+              setSubmitting(false);
+            }
+          } catch {
+            setSubmitting(false);
+          }
+        },
+      });
+      rzp.open();
     } catch {
       setSubmitting(false);
     }
