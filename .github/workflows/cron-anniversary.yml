@@ -1,0 +1,19 @@
+name: Anniversary email cron
+
+# Daily at 14:00 UTC (≈ 9am ET / 6am PT). Pings the anniversary route, which
+# scans for pets with paidAt one year ago and emails their owners a fresh
+# tribute. The route validates the Authorization header against CRON_SECRET.
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch: # allow manual trigger from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger anniversary route
+        run: |
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ vars.APP_URL }}/api/cron/anniversary"

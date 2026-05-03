@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# The official Next.js plugin handles ISR, route handlers, edge functions, and
+# the App Router. It is auto-installed by Netlify when a Next.js app is detected.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build.environment]
+  NODE_VERSION = "20"
