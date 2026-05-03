@@ -118,12 +118,12 @@ export async function POST(req: NextRequest) {
       paidAt: new Date(),
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://paws.memorial";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
     // Send confirmation email
     if (email) {
       await resend.emails.send({
-        from: "paws.memorial <hello@paws.memorial>",
+        from: "rainbow.memorial <hello@rainbow.memorial>",
         to: email,
         subject: `${petName}'s tribute is ready`,
         html: `
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
               <a href="${appUrl}/m/${slug}" style="color: #C97B63;">${appUrl}/m/${slug}</a>
             </p>
             <p style="color: #A89B8B; font-size: 14px; margin-top: 40px;">
-              — The paws.memorial team
+              — The rainbow.memorial team
             </p>
           </div>
         `,

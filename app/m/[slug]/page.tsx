@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const bornYear = p.bornDate ? new Date(p.bornDate).getFullYear() : null;
   const diedYear = new Date(p.diedDate).getFullYear();
   const dateStr = bornYear ? `${bornYear} – ${diedYear}` : diedYear.toString();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://paws.memorial";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
   // Prefer the dedicated 1200x630 OG image; fall back to the Story image if missing
   const ogImage = p.ogImageUrl ?? p.renderedImageUrl;

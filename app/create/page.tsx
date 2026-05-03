@@ -388,7 +388,7 @@ export default function CreatorPage() {
               className="font-semibold text-[--color-text-primary]"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              paws.memorial
+              rainbow.memorial
             </span>
           </Link>
           <div className="text-sm text-[--color-text-secondary]">Step 1 of 2</div>

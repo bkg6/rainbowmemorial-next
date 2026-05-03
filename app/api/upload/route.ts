@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
             resource_type: "image",
             detection: "adv_face",
             faces: true,
-            folder: "pawsmemorial",
+            folder: "rainbowmemorial",
           },
           (err, result) => {
             if (err) reject(err);

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       )
     );
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://paws.memorial";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
   const results = [];
 
   for (const pet of dueList) {
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       const imageUrl = await uploadToR2(key, buffer, "image/png");
 
       await resend.emails.send({
-        from: "paws.memorial <hello@paws.memorial>",
+        from: "rainbow.memorial <hello@rainbow.memorial>",
         to: pet.email,
         subject: `A year with ${pet.petName} in our hearts`,
         html: `
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
               </a>
             </div>
             <p style="color: #A89B8B; font-size: 14px; margin-top: 40px; border-top: 1px solid #EDE3D5; padding-top: 24px;">
-              — The paws.memorial team
+              — The rainbow.memorial team
             </p>
           </div>
         `,

@@ -109,7 +109,7 @@ export function MemorialPageClient({
         <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity w-fit">
           <PawPrint size={18} className="text-[#2A2A2A]" />
           <span className="text-sm font-semibold text-[--color-text-secondary]" style={{ fontFamily: "var(--font-body)" }}>
-            paws.memorial
+            rainbow.memorial
           </span>
         </Link>
       </header>
@@ -286,7 +286,7 @@ export function MemorialPageClient({
             In loving memory of {petName}.
           </p>
           <p className="text-[13px] text-[--color-text-tertiary]">
-            Created on PawsMemorial — make one for your fur baby
+            Created on Rainbow Memorial — make one for your fur baby
           </p>
           <Link href="/create">
             <button className="text-[13px] text-[--color-accent-primary] hover:text-[--color-accent-primary-hover] transition-colors">

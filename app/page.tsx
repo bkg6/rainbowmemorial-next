@@ -95,7 +95,7 @@ export default function Homepage() {
               className="font-semibold text-[--color-text-primary]"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              paws.memorial
+              rainbow.memorial
             </span>
           </Link>
           <Link href="/create">
@@ -414,7 +414,7 @@ export default function Homepage() {
                 className="font-semibold text-[--color-text-primary] text-sm"
                 style={{ fontFamily: "var(--font-body)" }}
               >
-                paws.memorial
+                rainbow.memorial
               </span>
             </div>
             <p className="text-sm text-[--color-text-secondary]">
@@ -422,13 +422,13 @@ export default function Homepage() {
             </p>
           </div>
           <div className="flex gap-8 text-[13px] text-[--color-text-secondary]">
-            <a href="mailto:hello@paws.memorial" className="hover:text-[--color-accent-primary] transition-colors">Contact</a>
+            <a href="mailto:hello@rainbow.memorial" className="hover:text-[--color-accent-primary] transition-colors">Contact</a>
             <a href="/privacy" className="hover:text-[--color-accent-primary] transition-colors">Privacy</a>
             <a href="/terms" className="hover:text-[--color-accent-primary] transition-colors">Terms</a>
           </div>
         </div>
         <p className="text-center text-[11px] text-[--color-text-tertiary] mt-8">
-          © 2026 paws.memorial
+          © 2026 rainbow.memorial
         </p>
       </footer>
     </div>

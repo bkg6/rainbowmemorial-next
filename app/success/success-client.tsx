@@ -118,7 +118,7 @@ export function SuccessClient({
               className="font-semibold text-[--color-text-primary]"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              paws.memorial
+              rainbow.memorial
             </span>
           </Link>
         </div>

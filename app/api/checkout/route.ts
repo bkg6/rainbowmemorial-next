@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://paws.memorial";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],

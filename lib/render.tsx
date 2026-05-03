@@ -157,7 +157,7 @@ export async function renderMemorial(input: RenderInput): Promise<Buffer> {
               whiteSpace: "nowrap",
             }}
           >
-            paws.memorial
+            rainbow.memorial
           </div>
         </div>
       )}

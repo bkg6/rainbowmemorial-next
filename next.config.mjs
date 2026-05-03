@@ -4,7 +4,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "cdn.paws.memorial" },
+      { protocol: "https", hostname: "cdn.rainbow.memorial" },
     ],
   },
   // Suppress the @vercel/og JSX type warning in lib/render.ts

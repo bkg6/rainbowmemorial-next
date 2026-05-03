@@ -53,7 +53,7 @@ export default async function SuccessPage({ searchParams }: Props) {
   }
 
   const pet = petRecord[0];
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://paws.memorial";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
   return (
     <SuccessClient

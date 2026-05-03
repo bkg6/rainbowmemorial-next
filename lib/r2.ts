@@ -13,8 +13,8 @@ export const r2 = new S3Client({
   },
 });
 
-const BUCKET = process.env.R2_BUCKET_NAME ?? "pawsmemorial";
-const PUBLIC_URL = `https://cdn.paws.memorial`; // update to actual R2 public domain
+const BUCKET = process.env.R2_BUCKET_NAME ?? "rainbowmemorial";
+const PUBLIC_URL = `https://cdn.rainbow.memorial`; // update to actual R2 public domain
 
 export async function uploadToR2(
   key: string,
