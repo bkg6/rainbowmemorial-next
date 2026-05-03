@@ -142,15 +142,93 @@ function PreviewCanvas({
   // Suppress unused warnings — photoCenterY is computed for clarity but unused
   void photoCenterY;
 
+  const isClassic = templateId === "classic";
+
   return (
     <div
       className="relative w-full h-full"
       style={{
-        backgroundImage: `url('/templates/${templateId}.png')`,
+        backgroundImage: isClassic
+          ? "radial-gradient(ellipse at center, #FBF6EC 0%, #F4ECDC 100%)"
+          : `url('/templates/${templateId}.png')`,
+        backgroundColor: isClassic ? "#FAF3E5" : undefined,
         backgroundSize: "cover",
         backgroundPosition: format === "square" ? "center 30%" : "center",
       }}
     >
+      {isClassic && (
+        <>
+          {/* Outer border — inset 3.7% (40 of 1080) */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "2.08%",
+              left: "3.7%",
+              right: "3.7%",
+              bottom: "2.08%",
+              border: "1px solid #D4C9BD",
+            }}
+          />
+          {/* Inner border — inset 4.5% (49 of 1080) */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "2.55%",
+              left: "4.54%",
+              right: "4.54%",
+              bottom: "2.55%",
+              border: "1px solid #D4C9BD",
+            }}
+          />
+          {/* Paper-tone overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%), radial-gradient(ellipse at 70% 80%, rgba(180,160,130,0.08) 0%, rgba(180,160,130,0) 55%)",
+            }}
+          />
+          {/* Paw watermark — top center, 5.5% wide of canvas, 8% opacity */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "4.7%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "5.55%",
+              opacity: 0.08,
+              color: "#C97B63",
+            }}
+          >
+            <svg width="100%" viewBox="0 0 60 60" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="30" cy="40" rx="14" ry="11" />
+              <ellipse cx="14" cy="24" rx="6" ry="8" />
+              <ellipse cx="46" cy="24" rx="6" ry="8" />
+              <ellipse cx="22" cy="11" rx="5" ry="7" />
+              <ellipse cx="38" cy="11" rx="5" ry="7" />
+            </svg>
+          </div>
+          {/* Ornamental line — between photo and name (y=1030 of 1920 = 53.6%) */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "53.6%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "18.5%",
+            }}
+          >
+            <svg width="100%" viewBox="0 0 200 10" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="5" r="2" fill="#D4C9BD" />
+              <line x1="18" y1="5" x2="92" y2="5" stroke="#D4C9BD" strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="100" cy="5" r="2.5" fill="#D4C9BD" />
+              <line x1="108" y1="5" x2="182" y2="5" stroke="#D4C9BD" strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="194" cy="5" r="2" fill="#D4C9BD" />
+            </svg>
+          </div>
+        </>
+      )}
+
       {/* Photo */}
       <div
         className="absolute"
@@ -616,30 +694,23 @@ export default function CreatorPage() {
             </div>
           </motion.div>
         ) : (
-          /* ──────── STATE 2 — Control panel left, large preview right ──────── */
-          <motion.div
-            key="state-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.0, 0.0, 0.2, 1.0] }}
-            className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-4 lg:py-5 lg:overflow-hidden"
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(320px,1fr)_2fr] gap-6 lg:gap-8 lg:h-full">
-              {/* LEFT — Control panel */}
-              <div className="order-2 lg:order-1 flex flex-col gap-4 lg:gap-3 lg:overflow-y-auto lg:pr-2">
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 400,
-                    fontSize: "22px",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  Tell us about them
-                </h2>
+          /* ──────── STATE 2 — Mobile-first vertical stack, desktop 2-col ──────── */
+          (() => {
+            const headingNode = (
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 400,
+                  fontSize: "22px",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                Tell us about them
+              </h2>
+            );
 
-                {/* Photo thumb + Change */}
+            const photoThumbNode = (
+              <>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="flex items-center gap-3 group w-fit"
@@ -657,183 +728,243 @@ export default function CreatorPage() {
                     Change photo
                   </span>
                 </button>
-
                 {!faceDetected && (
                   <p className="text-[12px] text-[--color-text-secondary] -mt-2">
                     We&apos;ll use the full photo.
                   </p>
                 )}
+              </>
+            );
 
+            const nameFieldNode = (
+              <MinimalField
+                label="Their name"
+                value={form.petName}
+                placeholder="Their name"
+                onChange={(v) => setForm((f) => ({ ...f, petName: v }))}
+              />
+            );
+
+            const datesFieldsNode = (
+              <div className="grid grid-cols-2 gap-3">
                 <MinimalField
-                  label="Their name"
-                  value={form.petName}
-                  placeholder="Their name"
-                  onChange={(v) => setForm((f) => ({ ...f, petName: v }))}
+                  label="Born"
+                  type="date"
+                  value={form.bornDate}
+                  onChange={(v) => setForm((f) => ({ ...f, bornDate: v }))}
                 />
-
-                <div className="grid grid-cols-2 gap-3">
-                  <MinimalField
-                    label="Born"
-                    type="date"
-                    value={form.bornDate}
-                    onChange={(v) => setForm((f) => ({ ...f, bornDate: v }))}
-                  />
-                  <MinimalField
-                    label="Goodbye"
-                    type="date"
-                    value={form.diedDate}
-                    onChange={(v) => setForm((f) => ({ ...f, diedDate: v }))}
-                  />
-                </div>
-
                 <MinimalField
-                  label="Tribute"
-                  value={form.tributeLine}
-                  placeholder="Optional"
-                  maxLength={60}
-                  onChange={(v) => setForm((f) => ({ ...f, tributeLine: v.slice(0, 60) }))}
-                  rightAdornment={
-                    <span className="text-[10px] text-[--color-text-tertiary] shrink-0 pb-1.5">
-                      {form.tributeLine.length}/60
-                    </span>
-                  }
+                  label="Goodbye"
+                  type="date"
+                  value={form.diedDate}
+                  onChange={(v) => setForm((f) => ({ ...f, diedDate: v }))}
                 />
+              </div>
+            );
 
-                {/* Template picker */}
-                <div className="pt-2">
-                  <label className="text-[10px] tracking-[0.08em] uppercase text-[--color-text-tertiary] mb-2 font-medium block">
-                    Template
-                  </label>
-                  <div className="flex gap-2">
-                    {TEMPLATE_OPTIONS.map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={() => setSelectedTemplate(t.id)}
-                        type="button"
-                        className={`flex-1 group flex flex-col items-center gap-1.5 transition-transform duration-[200ms] ${
-                          selectedTemplate === t.id ? "scale-[1.04]" : "opacity-75 hover:opacity-100"
+            const tributeFieldNode = (
+              <MinimalField
+                label="Tribute"
+                value={form.tributeLine}
+                placeholder="Optional"
+                maxLength={60}
+                onChange={(v) => setForm((f) => ({ ...f, tributeLine: v.slice(0, 60) }))}
+                rightAdornment={
+                  <span className="text-[10px] text-[--color-text-tertiary] shrink-0 pb-1.5">
+                    {form.tributeLine.length}/60
+                  </span>
+                }
+              />
+            );
+
+            const templatePickerNode = (
+              <div className="pt-2">
+                <label className="text-[10px] tracking-[0.08em] uppercase text-[--color-text-tertiary] mb-2 font-medium block">
+                  Template
+                </label>
+                <div className="flex gap-2 overflow-x-auto -mx-1 px-1 lg:overflow-visible lg:mx-0 lg:px-0">
+                  {TEMPLATE_OPTIONS.map((t) => (
+                    <button
+                      key={t.id}
+                      onClick={() => setSelectedTemplate(t.id)}
+                      type="button"
+                      className={`shrink-0 w-[60px] lg:w-auto lg:flex-1 group flex flex-col items-center gap-1.5 transition-transform duration-[200ms] ${
+                        selectedTemplate === t.id ? "scale-[1.04]" : "opacity-75 hover:opacity-100"
+                      }`}
+                      title={t.label}
+                      aria-label={t.label}
+                    >
+                      <div
+                        className={`w-full aspect-[9/16] rounded-[6px] overflow-hidden ${
+                          selectedTemplate === t.id
+                            ? "ring-2 ring-[--color-accent-primary] ring-offset-2 ring-offset-[--color-background]"
+                            : "ring-1 ring-[--color-border]"
                         }`}
-                        title={t.label}
-                        aria-label={t.label}
                       >
-                        <div
-                          className={`w-full aspect-[9/16] rounded-[6px] overflow-hidden ${
-                            selectedTemplate === t.id
-                              ? "ring-2 ring-[--color-accent-primary] ring-offset-2 ring-offset-[--color-background]"
-                              : "ring-1 ring-[--color-border]"
-                          }`}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={t.image} alt={t.label} className="w-full h-full object-cover" />
-                        </div>
-                        <span
-                          className={`text-[10px] leading-tight text-center ${
-                            selectedTemplate === t.id
-                              ? "text-[--color-text-primary] font-medium"
-                              : "text-[--color-text-tertiary]"
-                          }`}
-                        >
-                          {t.label}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Format toggle */}
-                <div className="pt-2">
-                  <label className="text-[10px] tracking-[0.08em] uppercase text-[--color-text-tertiary] mb-2 font-medium block">
-                    Format
-                  </label>
-                  <div className="flex gap-1 bg-[--color-background-alt] p-1 rounded-full border border-[--color-border] w-fit">
-                    {(["story", "square"] as const).map((fmt) => (
-                      <button
-                        key={fmt}
-                        onClick={() => setSelectedFormat(fmt)}
-                        className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-[200ms] ${
-                          selectedFormat === fmt
-                            ? "bg-[--color-accent-primary] text-white"
-                            : "bg-transparent text-[--color-text-secondary] hover:text-[--color-text-primary]"
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={t.image} alt={t.label} className="w-full h-full object-cover" />
+                      </div>
+                      <span
+                        className={`text-[10px] leading-tight text-center ${
+                          selectedTemplate === t.id
+                            ? "text-[--color-text-primary] font-medium"
+                            : "text-[--color-text-tertiary]"
                         }`}
-                        type="button"
                       >
-                        {fmt === "story" ? "Story" : "Square"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CTAs at bottom */}
-                <div className="mt-auto pt-4 space-y-2.5">
-                  <Button
-                    className="w-full min-h-[48px]"
-                    onClick={handleCheckout}
-                    disabled={!canCheckout || submitting}
-                  >
-                    {submitting ? "Redirecting..." : "Get full memorial — $24.99"}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={handleDownloadPreview}
-                    disabled={!renderSrc || downloadingPreview}
-                    className="w-full min-h-[44px] flex items-center gap-2 justify-center text-[14px]"
-                  >
-                    <Download size={14} />
-                    {downloadingPreview ? "Downloading..." : "Download free preview"}
-                  </Button>
-                  <p className="text-[11px] text-center" style={{ color: "#888888" }}>
-                    {!canCheckout
-                      ? "Add a name and goodbye date to continue"
-                      : "Free preview is watermarked. Full memorial is yours forever."}
-                  </p>
+                        {t.label}
+                      </span>
+                    </button>
+                  ))}
                 </div>
               </div>
+            );
 
-              {/* RIGHT — Preview only, large */}
-              <div className="order-1 lg:order-2 flex items-center justify-center lg:h-full p-2">
-                <motion.div
-                  key={`preview-${selectedFormat}`}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: rendering || uploading ? 0.6 : 1,
-                    scale: rendering || uploading ? [1, 1.005, 1] : 1,
-                  }}
-                  transition={{
-                    opacity: { duration: 0.4 },
-                    scale:
-                      rendering || uploading
-                        ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" }
-                        : { duration: 0 },
-                  }}
-                  className={`overflow-hidden rounded-[8px] ${
-                    selectedFormat === "story"
-                      ? "h-full max-h-[min(90vh,1100px)] aspect-[9/16]"
-                      : "h-full max-h-[min(90vh,800px)] aspect-square"
-                  }`}
-                  style={{ maxWidth: "100%" }}
+            const formatToggleNode = (
+              <div className="pt-2">
+                <label className="text-[10px] tracking-[0.08em] uppercase text-[--color-text-tertiary] mb-2 font-medium block">
+                  Format
+                </label>
+                <div className="flex gap-1 bg-[--color-background-alt] p-1 rounded-full border border-[--color-border] w-fit">
+                  {(["story", "square"] as const).map((fmt) => (
+                    <button
+                      key={fmt}
+                      onClick={() => setSelectedFormat(fmt)}
+                      className={`px-4 py-1.5 rounded-full text-[12px] font-medium transition-colors duration-[200ms] ${
+                        selectedFormat === fmt
+                          ? "bg-[--color-accent-primary] text-white"
+                          : "bg-transparent text-[--color-text-secondary] hover:text-[--color-text-primary]"
+                      }`}
+                      type="button"
+                    >
+                      {fmt === "story" ? "Story" : "Square"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+
+            const ctasNode = (
+              <div className="mt-auto pt-4 space-y-2.5">
+                <Button
+                  className="w-full min-h-[48px]"
+                  onClick={handleCheckout}
+                  disabled={!canCheckout || submitting}
                 >
-                  {renderSrc ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={renderSrc}
-                      alt="Memorial preview"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <PreviewCanvas
-                      templateId={selectedTemplate}
-                      format={selectedFormat}
-                      photoSrc={previewPhotoSrc!}
-                      petName={form.petName}
-                      bornYear={formatYear(form.bornDate)}
-                      diedYear={formatYear(form.diedDate)}
-                      tributeLine={form.tributeLine}
-                    />
-                  )}
-                </motion.div>
+                  {submitting ? "Redirecting..." : "Get full memorial — $24.99"}
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleDownloadPreview}
+                  disabled={!renderSrc || downloadingPreview}
+                  className="w-full min-h-[44px] flex items-center gap-2 justify-center text-[14px]"
+                >
+                  <Download size={14} />
+                  {downloadingPreview ? "Downloading..." : "Download free preview"}
+                </Button>
+                <p className="text-[11px] text-center" style={{ color: "#888888" }}>
+                  {!canCheckout
+                    ? "Add a name and goodbye date to continue"
+                    : "Free preview is watermarked. Full memorial is yours forever."}
+                </p>
               </div>
-            </div>
-          </motion.div>
+            );
+
+            const previewInner = renderSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={renderSrc}
+                alt="Memorial preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <PreviewCanvas
+                templateId={selectedTemplate}
+                format={selectedFormat}
+                photoSrc={previewPhotoSrc!}
+                petName={form.petName}
+                bornYear={formatYear(form.bornDate)}
+                diedYear={formatYear(form.diedDate)}
+                tributeLine={form.tributeLine}
+              />
+            );
+
+            const previewMotionProps = {
+              initial: { opacity: 0 },
+              animate: {
+                opacity: rendering || uploading ? 0.6 : 1,
+                scale: rendering || uploading ? [1, 1.005, 1] : 1,
+              },
+              transition: {
+                opacity: { duration: 0.4 },
+                scale:
+                  rendering || uploading
+                    ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" as const }
+                    : { duration: 0 },
+              },
+            };
+
+            return (
+              <motion.div
+                key="state-2"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.0, 0.0, 0.2, 1.0] }}
+                className="flex-1 max-w-[1400px] w-full mx-auto px-4 lg:px-6 py-4 lg:py-5 lg:overflow-hidden"
+              >
+                {/* MOBILE — vertical stack, preview-first */}
+                <div className="flex flex-col gap-5 lg:hidden">
+                  {headingNode}
+                  <motion.div
+                    key={`preview-mobile-${selectedFormat}`}
+                    {...previewMotionProps}
+                    className={`overflow-hidden rounded-[8px] mx-auto w-full ${
+                      selectedFormat === "story"
+                        ? "max-w-[420px] aspect-[9/16]"
+                        : "max-w-[460px] aspect-square"
+                    }`}
+                  >
+                    {previewInner}
+                  </motion.div>
+                  {templatePickerNode}
+                  {formatToggleNode}
+                  {photoThumbNode}
+                  {nameFieldNode}
+                  {datesFieldsNode}
+                  {tributeFieldNode}
+                  {ctasNode}
+                </div>
+
+                {/* DESKTOP — 2-col, original layout */}
+                <div className="hidden lg:grid lg:grid-cols-[minmax(320px,1fr)_2fr] lg:gap-8 lg:h-full">
+                  <div className="flex flex-col gap-3 overflow-y-auto pr-2">
+                    {headingNode}
+                    {photoThumbNode}
+                    {nameFieldNode}
+                    {datesFieldsNode}
+                    {tributeFieldNode}
+                    {templatePickerNode}
+                    {formatToggleNode}
+                    {ctasNode}
+                  </div>
+                  <div className="flex items-center justify-center h-full p-2">
+                    <motion.div
+                      key={`preview-desktop-${selectedFormat}`}
+                      {...previewMotionProps}
+                      className={`overflow-hidden rounded-[8px] ${
+                        selectedFormat === "story"
+                          ? "h-full max-h-[min(90vh,1100px)] aspect-[9/16]"
+                          : "h-full max-h-[min(90vh,800px)] aspect-square"
+                      }`}
+                      style={{ maxWidth: "100%" }}
+                    >
+                      {previewInner}
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })()
         )}
       </AnimatePresence>
     </div>

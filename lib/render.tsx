@@ -37,6 +37,7 @@ export async function renderMemorial(input: RenderInput): Promise<Buffer> {
   const { width, height } = { width: template.canvasWidth, height: template.canvasHeight };
   const pz = template.photoZone;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const isClassic = input.templateId === "classic";
 
   const element = (
     <div
@@ -47,11 +48,100 @@ export async function renderMemorial(input: RenderInput): Promise<Buffer> {
         flexDirection: "column",
         alignItems: "center",
         position: "relative",
-        backgroundImage: `url(${appUrl}${template.background})`,
+        backgroundImage: isClassic
+          ? "radial-gradient(ellipse at center, #FBF6EC 0%, #F4ECDC 100%)"
+          : `url(${appUrl}${template.background})`,
+        backgroundColor: isClassic ? "#FAF3E5" : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      {/* Classic decorations: outer + inner border, paw watermark, ornamental line */}
+      {isClassic && (
+        <>
+          {/* Outer border line — 1px, inset 40 */}
+          <div
+            style={{
+              position: "absolute",
+              top: 40,
+              left: 40,
+              right: 40,
+              bottom: 40,
+              border: "1px solid #D4C9BD",
+              display: "flex",
+            }}
+          />
+          {/* Inner border line — 1px, inset 49 (8px gap) */}
+          <div
+            style={{
+              position: "absolute",
+              top: 49,
+              left: 49,
+              right: 49,
+              bottom: 49,
+              border: "1px solid #D4C9BD",
+              display: "flex",
+            }}
+          />
+          {/* Soft paper-tone vignette overlay for texture suggestion */}
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage:
+                "radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 60%), radial-gradient(ellipse at 70% 80%, rgba(180,160,130,0.08) 0%, rgba(180,160,130,0) 55%)",
+              display: "flex",
+            }}
+          />
+          {/* Paw watermark — top center, ~60px wide, 8% opacity */}
+          <div
+            style={{
+              position: "absolute",
+              top: 90,
+              left: width / 2 - 30,
+              width: 60,
+              height: 60,
+              opacity: 0.08,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="#C97B63" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="30" cy="40" rx="14" ry="11" />
+              <ellipse cx="14" cy="24" rx="6" ry="8" />
+              <ellipse cx="46" cy="24" rx="6" ry="8" />
+              <ellipse cx="22" cy="11" rx="5" ry="7" />
+              <ellipse cx="38" cy="11" rx="5" ry="7" />
+            </svg>
+          </div>
+          {/* Ornamental line between photo (bottom y=970) and name (y=1100) */}
+          <div
+            style={{
+              position: "absolute",
+              top: 1030,
+              left: width / 2 - 100,
+              width: 200,
+              height: 10,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg width="200" height="10" viewBox="0 0 200 10" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="6" cy="5" r="2" fill="#D4C9BD" />
+              <line x1="18" y1="5" x2="92" y2="5" stroke="#D4C9BD" strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="100" cy="5" r="2.5" fill="#D4C9BD" />
+              <line x1="108" y1="5" x2="182" y2="5" stroke="#D4C9BD" strokeWidth="1" strokeDasharray="6 4" />
+              <circle cx="194" cy="5" r="2" fill="#D4C9BD" />
+            </svg>
+          </div>
+        </>
+      )}
+
       {/* Photo zone */}
       <div
         style={{
