@@ -4,13 +4,32 @@ import { pets } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { SuccessClient } from "./success-client";
 import { SuccessPending } from "./success-pending";
+import { SuccessVerifying } from "./success-verifying";
 
 interface Props {
-  searchParams: { slug?: string };
+  searchParams: {
+    slug?: string;
+    order_id?: string;
+    payment_id?: string;
+    signature?: string;
+  };
 }
 
 export default async function SuccessPage({ searchParams }: Props) {
-  const { slug } = searchParams;
+  const { slug, order_id, payment_id, signature } = searchParams;
+
+  // Post-payment landing — Razorpay redirected here directly. Verify, insert,
+  // then bounce to /success?slug=... Retries handled client-side.
+  if (order_id && payment_id && signature) {
+    return (
+      <SuccessVerifying
+        orderId={order_id}
+        paymentId={payment_id}
+        signature={signature}
+      />
+    );
+  }
+
   if (!slug) redirect("/");
 
   const petRecord = await db
@@ -43,7 +62,6 @@ export default async function SuccessPage({ searchParams }: Props) {
   const pet = petRecord[0];
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
-  // Render is still pending — show pending UI that triggers finalize and polls.
   if (!pet.renderedImageUrl) {
     return <SuccessPending slug={slug} petName={pet.petName} />;
   }

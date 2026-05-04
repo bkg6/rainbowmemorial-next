@@ -526,9 +526,10 @@ export default function CreatorPage() {
         modal: {
           ondismiss: () => setSubmitting(false),
         },
-        handler: async (response) => {
-          // Save the payment IDs to localStorage so the user can recover if
-          // the verify call fails.
+        handler: (response) => {
+          // Save the payment IDs to localStorage as a recovery breadcrumb,
+          // then redirect IMMEDIATELY. All server-side verify+insert work
+          // happens on the success page, where retries are free.
           try {
             localStorage.setItem(
               "lastPayment",
@@ -538,33 +539,12 @@ export default function CreatorPage() {
               })
             );
           } catch {}
-          try {
-            const verifyRes = await fetch("/api/webhook/razorpay", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-            const verifyData = await verifyRes.json().catch(() => ({}));
-            if (verifyData?.slug) {
-              window.location.href = `/success?slug=${verifyData.slug}`;
-              return;
-            }
-            console.error("Verify endpoint did not return slug:", verifyRes.status, verifyData);
-            setCheckoutError(
-              `Payment confirmed but we couldn't redirect you. Your payment ID is ${response.razorpay_payment_id} — keep this and email hello@rainbow.memorial if your tribute doesn't appear.`
-            );
-            setSubmitting(false);
-          } catch (err) {
-            console.error("Verify call threw:", err);
-            setCheckoutError(
-              `Payment confirmed but the verify call failed. Your payment ID is ${response.razorpay_payment_id} — keep this and email hello@rainbow.memorial.`
-            );
-            setSubmitting(false);
-          }
+          const params = new URLSearchParams({
+            order_id: response.razorpay_order_id,
+            payment_id: response.razorpay_payment_id,
+            signature: response.razorpay_signature,
+          });
+          window.location.href = `/success?${params.toString()}`;
         },
       });
       rzp.open();
