@@ -59,9 +59,7 @@ export async function POST(req: NextRequest) {
       .where(eq(pets.stripeSessionId, razorpay_order_id))
       .limit(1);
     if (existing.length) {
-      const slug = existing[0].slug;
-      kickFinalize(slug);
-      return NextResponse.json({ slug });
+      return NextResponse.json({ slug: existing[0].slug });
     }
 
     const order = await razorpay.orders.fetch(razorpay_order_id);
@@ -97,22 +95,14 @@ export async function POST(req: NextRequest) {
       paidAt: new Date(),
     });
 
-    // Fire-and-forget — kick the slow path. May or may not complete in this
-    // function's lifecycle; the success page also retries finalize on load,
-    // so completion is guaranteed there.
-    kickFinalize(slug);
-
+    // Rendering happens on the success page via <SuccessPending>, which
+    // POSTs /api/finalize/[slug] from the browser. We deliberately do NOT
+    // kick that here: the in-process fetch would keep this lambda alive on
+    // Netlify until the event loop drains, re-introducing the timeout the
+    // split was meant to fix.
     return NextResponse.json({ slug });
   } catch (err) {
     console.error("Razorpay webhook error:", err);
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
-}
-
-function kickFinalize(slug: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
-  fetch(`${appUrl}/api/finalize/${slug}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  }).catch((e) => console.error("finalize kick failed:", e));
 }
