@@ -1,5 +1,9 @@
 [build]
-  command = "npm run build"
+  # Production deploys run pending Drizzle migrations against DATABASE_URL
+  # before building. Preview/branch deploys skip the migration so they can't
+  # accidentally mutate the production schema. If the migration fails, the
+  # build fails loud and no broken deploy goes live.
+  command = "if [ \"$CONTEXT\" = \"production\" ]; then npm run db:migrate && npm run build; else npm run build; fi"
   publish = ".next"
 
 # The official Next.js plugin handles ISR, route handlers, edge functions, and

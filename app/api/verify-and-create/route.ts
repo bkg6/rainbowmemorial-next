@@ -9,6 +9,27 @@ import type { TemplateId } from "@/lib/templates";
 
 export const runtime = "nodejs";
 
+// Postgres "undefined_table" — schema not migrated. Not a transient failure;
+// retrying won't help. Frontend should surface support contact instead.
+const PG_UNDEFINED_TABLE = "42P01";
+
+function isTransientDbError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return true;
+  const cause = (err as { cause?: { code?: string } }).cause;
+  const code =
+    (err as { code?: string }).code ?? (cause && cause.code) ?? undefined;
+  if (!code) return true; // unknown — give it a retry
+  // Hard schema/auth errors — never retryable
+  const NON_RETRYABLE = new Set([
+    PG_UNDEFINED_TABLE, // 42P01 relation does not exist
+    "42703", // undefined_column
+    "42501", // insufficient_privilege
+    "28P01", // invalid_password
+    "3D000", // invalid_catalog_name
+  ]);
+  return !NON_RETRYABLE.has(code);
+}
+
 async function generateUniqueSlug(
   petName: string,
   bornDate?: string | null,
@@ -32,23 +53,32 @@ async function generateUniqueSlug(
 }
 
 export async function POST(req: NextRequest) {
+  let step: string = "parse";
   try {
+    step = "parse";
     const { order_id, payment_id, signature } = await req.json();
 
     if (!order_id || !payment_id || !signature) {
-      return NextResponse.json({ error: "Missing payment fields" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing payment fields", retryable: false, step },
+        { status: 400 }
+      );
     }
 
+    step = "verify_signature";
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
       .update(`${order_id}|${payment_id}`)
       .digest("hex");
 
     if (expectedSignature !== signature) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid signature", retryable: false, step },
+        { status: 400 }
+      );
     }
 
-    // Idempotent — return the existing slug if we've already created the row.
+    step = "idempotency_select";
     const existing = await db
       .select({ slug: pets.slug })
       .from(pets)
@@ -58,6 +88,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ slug: existing[0].slug, status: "exists" });
     }
 
+    step = "fetch_order";
     const order = await razorpay.orders.fetch(order_id);
     const notes = (order.notes ?? {}) as Record<string, string>;
 
@@ -70,11 +101,16 @@ export async function POST(req: NextRequest) {
     const croppedPhotoUrl = notes.croppedPhotoUrl;
 
     if (!petName || !diedDate || !croppedPhotoUrl || !originalPhotoUrl) {
-      return NextResponse.json({ error: "Order missing metadata" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Order missing metadata", retryable: false, step },
+        { status: 400 }
+      );
     }
 
+    step = "generate_slug";
     const slug = await generateUniqueSlug(petName, bornDate, diedDate);
 
+    step = "insert";
     await db.insert(pets).values({
       email: "",
       stripeSessionId: order_id,
@@ -93,7 +129,23 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ slug, status: "created" });
   } catch (err) {
-    console.error("verify-and-create error:", err);
-    return NextResponse.json({ error: "Verification failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    const code =
+      (err as { code?: string; cause?: { code?: string } }).code ??
+      (err as { cause?: { code?: string } }).cause?.code;
+    const retryable = isTransientDbError(err);
+    console.error(
+      `verify-and-create error at step=${step} code=${code} retryable=${retryable}:`,
+      err
+    );
+    return NextResponse.json(
+      {
+        error: message,
+        code,
+        retryable,
+        step,
+      },
+      { status: 500 }
+    );
   }
 }
