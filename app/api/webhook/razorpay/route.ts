@@ -3,9 +3,6 @@ import crypto from "crypto";
 import { razorpay } from "@/lib/razorpay";
 import { db } from "@/lib/db";
 import { pets } from "@/db/schema";
-import { renderMemorial, renderOgImage } from "@/lib/render";
-import { uploadToR2 } from "@/lib/r2";
-import { resend } from "@/lib/resend";
 import { slugify } from "@/lib/templates";
 import { eq } from "drizzle-orm";
 import type { TemplateId } from "@/lib/templates";
@@ -40,7 +37,6 @@ export async function POST(req: NextRequest) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      email,
     } = await req.json();
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -56,14 +52,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // Idempotency — if we already processed this order, return its slug.
+    // Idempotency — if we already inserted this order, return the slug.
     const existing = await db
-      .select()
+      .select({ slug: pets.slug })
       .from(pets)
       .where(eq(pets.stripeSessionId, razorpay_order_id))
       .limit(1);
     if (existing.length) {
-      return NextResponse.json({ slug: existing[0].slug });
+      const slug = existing[0].slug;
+      kickFinalize(slug);
+      return NextResponse.json({ slug });
     }
 
     const order = await razorpay.orders.fetch(razorpay_order_id);
@@ -81,34 +79,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Order missing metadata" }, { status: 400 });
     }
 
-    const renderedBuffer = await renderMemorial({
-      photoUrl: croppedPhotoUrl,
-      name: petName,
-      bornDate,
-      diedDate,
-      tributeLine,
-      templateId,
-      watermark: false,
-    });
-    const renderedKey = `rendered/${razorpay_order_id}.png`;
-    const renderedImageUrl = await uploadToR2(renderedKey, renderedBuffer, "image/png");
-
-    const ogBuffer = await renderOgImage({
-      photoUrl: croppedPhotoUrl,
-      name: petName,
-      bornDate,
-      diedDate,
-      tributeLine,
-      templateId,
-    });
-    const ogKey = `og/${razorpay_order_id}.png`;
-    const ogImageUrl = await uploadToR2(ogKey, ogBuffer, "image/png");
-
     const slug = await generateUniqueSlug(petName, bornDate, diedDate);
-    const customerEmail = (email ?? "").toString();
 
     await db.insert(pets).values({
-      email: customerEmail,
+      email: "",
       stripeSessionId: razorpay_order_id,
       petName,
       bornDate,
@@ -116,47 +90,29 @@ export async function POST(req: NextRequest) {
       tributeLine,
       originalPhotoUrl,
       croppedPhotoUrl,
-      renderedImageUrl,
-      ogImageUrl,
+      renderedImageUrl: null,
+      ogImageUrl: null,
       templateId,
       slug,
       paidAt: new Date(),
     });
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
-
-    if (customerEmail) {
-      await resend.emails.send({
-        from: "rainbow.memorial <hello@rainbow.memorial>",
-        to: customerEmail,
-        subject: `${petName}'s tribute is ready`,
-        html: `
-          <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 24px; background: #FAF6EF;">
-            <p style="font-size: 18px; color: #2A1F18; line-height: 1.65;">
-              ${petName}'s tribute is yours.
-            </p>
-            <p style="color: #7A6A5C; line-height: 1.65;">
-              We made something beautiful for them. It's ready whenever you'd like to share it.
-            </p>
-            <a href="${appUrl}/success?slug=${slug}"
-               style="display: inline-block; background: #C97B63; color: white; padding: 14px 32px; border-radius: 999px; text-decoration: none; font-size: 16px; margin: 24px 0;">
-              View &amp; Download
-            </a>
-            <p style="color: #7A6A5C; line-height: 1.65;">
-              You can also visit their memorial page anytime at:<br>
-              <a href="${appUrl}/m/${slug}" style="color: #C97B63;">${appUrl}/m/${slug}</a>
-            </p>
-            <p style="color: #A89B8B; font-size: 14px; margin-top: 40px;">
-              — The rainbow.memorial team
-            </p>
-          </div>
-        `,
-      });
-    }
+    // Fire-and-forget — kick the slow path. May or may not complete in this
+    // function's lifecycle; the success page also retries finalize on load,
+    // so completion is guaranteed there.
+    kickFinalize(slug);
 
     return NextResponse.json({ slug });
   } catch (err) {
     console.error("Razorpay webhook error:", err);
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
+}
+
+function kickFinalize(slug: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
+  fetch(`${appUrl}/api/finalize/${slug}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  }).catch((e) => console.error("finalize kick failed:", e));
 }

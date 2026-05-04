@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { pets } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { SuccessClient } from "./success-client";
+import { SuccessPending } from "./success-pending";
 
 interface Props {
   searchParams: { slug?: string };
@@ -29,10 +30,10 @@ export default async function SuccessPage({ searchParams }: Props) {
             className="text-[28px]"
             style={{ fontFamily: "var(--font-display)", fontWeight: 400 }}
           >
-            Your tribute is being prepared.
+            We couldn&apos;t find that tribute.
           </p>
           <p className="text-[--color-text-secondary]">
-            This takes about 30 seconds. Refresh this page in a moment.
+            If you just paid, try refreshing in a moment.
           </p>
         </div>
       </div>
@@ -41,6 +42,11 @@ export default async function SuccessPage({ searchParams }: Props) {
 
   const pet = petRecord[0];
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
+
+  // Render is still pending — show pending UI that triggers finalize and polls.
+  if (!pet.renderedImageUrl) {
+    return <SuccessPending slug={slug} petName={pet.petName} />;
+  }
 
   return (
     <SuccessClient

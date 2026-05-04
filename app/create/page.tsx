@@ -318,6 +318,7 @@ export default function CreatorPage() {
   const [rendering, setRendering] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [downloadingPreview, setDownloadingPreview] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -482,9 +483,11 @@ export default function CreatorPage() {
   const handleCheckout = async () => {
     if (!originalPhotoUrl || !croppedPhotoUrl || !form.petName || !form.diedDate) return;
     setSubmitting(true);
+    setCheckoutError(null);
     try {
       await loadRazorpay();
       if (!window.Razorpay) {
+        setCheckoutError("Couldn't load the payment SDK. Check your connection and try again.");
         setSubmitting(false);
         return;
       }
@@ -503,6 +506,8 @@ export default function CreatorPage() {
       });
       const data = await res.json();
       if (!data.orderId || !data.keyId) {
+        console.error("Checkout response missing order:", data);
+        setCheckoutError("Couldn't start checkout. Please try again.");
         setSubmitting(false);
         return;
       }
@@ -522,6 +527,17 @@ export default function CreatorPage() {
           ondismiss: () => setSubmitting(false),
         },
         handler: async (response) => {
+          // Save the payment IDs to localStorage so the user can recover if
+          // the verify call fails.
+          try {
+            localStorage.setItem(
+              "lastPayment",
+              JSON.stringify({
+                ...response,
+                at: new Date().toISOString(),
+              })
+            );
+          } catch {}
           try {
             const verifyRes = await fetch("/api/webhook/razorpay", {
               method: "POST",
@@ -532,19 +548,29 @@ export default function CreatorPage() {
                 razorpay_signature: response.razorpay_signature,
               }),
             });
-            const verifyData = await verifyRes.json();
-            if (verifyData.slug) {
+            const verifyData = await verifyRes.json().catch(() => ({}));
+            if (verifyData?.slug) {
               window.location.href = `/success?slug=${verifyData.slug}`;
-            } else {
-              setSubmitting(false);
+              return;
             }
-          } catch {
+            console.error("Verify endpoint did not return slug:", verifyRes.status, verifyData);
+            setCheckoutError(
+              `Payment confirmed but we couldn't redirect you. Your payment ID is ${response.razorpay_payment_id} — keep this and email hello@rainbow.memorial if your tribute doesn't appear.`
+            );
+            setSubmitting(false);
+          } catch (err) {
+            console.error("Verify call threw:", err);
+            setCheckoutError(
+              `Payment confirmed but the verify call failed. Your payment ID is ${response.razorpay_payment_id} — keep this and email hello@rainbow.memorial.`
+            );
             setSubmitting(false);
           }
         },
       });
       rzp.open();
-    } catch {
+    } catch (err) {
+      console.error("Checkout setup failed:", err);
+      setCheckoutError("Couldn't start checkout. Please try again.");
       setSubmitting(false);
     }
   };
@@ -850,7 +876,7 @@ export default function CreatorPage() {
                   onClick={handleCheckout}
                   disabled={!canCheckout || submitting}
                 >
-                  {submitting ? "Redirecting..." : "Get full memorial — $24.99"}
+                  {submitting ? "Opening checkout..." : "Get full memorial — $24.99"}
                 </Button>
                 <Button
                   variant="secondary"
@@ -861,11 +887,24 @@ export default function CreatorPage() {
                   <Download size={14} />
                   {downloadingPreview ? "Downloading..." : "Download free preview"}
                 </Button>
-                <p className="text-[11px] text-center" style={{ color: "#888888" }}>
-                  {!canCheckout
-                    ? "Add a name and goodbye date to continue"
-                    : "Free preview is watermarked. Full memorial is yours forever."}
-                </p>
+                {checkoutError ? (
+                  <p
+                    className="text-[12px] text-center px-2 py-2 rounded-md"
+                    style={{
+                      color: "#7A2A1F",
+                      backgroundColor: "rgba(201,123,99,0.12)",
+                      border: "1px solid rgba(201,123,99,0.3)",
+                    }}
+                  >
+                    {checkoutError}
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-center" style={{ color: "#888888" }}>
+                    {!canCheckout
+                      ? "Add a name and goodbye date to continue"
+                      : "Free preview is watermarked. Full memorial is yours forever."}
+                  </p>
+                )}
               </div>
             );
 
