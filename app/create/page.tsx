@@ -351,6 +351,14 @@ export default function CreatorPage() {
     loadRazorpay().catch(() => {});
   }, [loadRazorpay]);
 
+  // Pre-warm the Neon DB on mount. Neon's free tier auto-suspends compute
+  // after ~5 min idle; cold wake is 5-10s. Firing this when the user lands
+  // on /create means the DB is reliably warm by the time they finish the
+  // form and pay, keeping verify-and-create comfortably under 10s.
+  useEffect(() => {
+    fetch("/api/warmup").catch(() => {});
+  }, []);
+
   // TEMP: visual verification helper — open /create?demo=template_id to render State 2 with a sample
   useEffect(() => {
     if (typeof window === "undefined") return;
