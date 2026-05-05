@@ -91,3 +91,46 @@
     line-height: 1.4;
   }
 }
+
+/* SEO long-form articles (e.g. /rainbow-bridge). The site's base styles set
+   p to DM Sans 16px which is correct for product UI but wrong for editorial
+   reading. This wrapper restores serif body type at editorial sizes without
+   touching anything else on the site. */
+.rb-article p {
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.65;
+}
+.rb-article p strong {
+  font-weight: 600;
+}
+.rb-article h1 {
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.rb-article h2 {
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.rb-article footer p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+@media (min-width: 768px) {
+  .rb-article p {
+    font-size: 19px;
+  }
+  .rb-article h1 {
+    font-size: 44px;
+  }
+  .rb-article h2 {
+    font-size: 28px;
+  }
+  .rb-article footer p {
+    font-size: 16px;
+  }
+}
