@@ -381,21 +381,20 @@ export default function RainbowBridgePage() {
             </p>
           </div>
 
-          <h2 className="mt-14 mb-6">
-            Where to go from here
-          </h2>
+          <h2 className="mt-14 mb-6">Where to go from here</h2>
           <div className="space-y-6">
             <p>
-              If you&apos;d like the longer story of how the Rainbow
-              Bridge poem was written,{" "}
+              If you&apos;d like{" "}
               <Link
                 href="/rainbow-bridge/who-wrote-the-rainbow-bridge-poem"
                 className="underline underline-offset-4 hover:no-underline"
                 style={{ color: "var(--color-accent-primary)" }}
               >
-                we have a fuller page on Edna and Major
-              </Link>{" "}
-              with the details Paul Koudounaris uncovered in 2023.
+                the longer story of how the Rainbow Bridge poem was
+                written
+              </Link>
+              , we have a fuller page on Edna and Major with the details
+              Paul Koudounaris uncovered in 2023.
             </p>
             <p>
               If your dog has just died,{" "}
@@ -410,49 +409,23 @@ export default function RainbowBridgePage() {
               .
             </p>
             <p>
-              If your cat has just died,{" "}
-              <Link
-                href="/rainbow-bridge/cats"
-                className="underline underline-offset-4 hover:no-underline"
-                style={{ color: "var(--color-accent-primary)" }}
-              >
-                it&apos;s here
-              </Link>
-              .
-            </p>
-            <p>
-              If you want a shorter version that fits on a card,{" "}
+              If you want{" "}
               <Link
                 href="/rainbow-bridge/short-version"
                 className="underline underline-offset-4 hover:no-underline"
                 style={{ color: "var(--color-accent-primary)" }}
               >
-                it&apos;s here
+                a shorter version that fits on a card
               </Link>
-              .
+              , it&apos;s here.
             </p>
             <p>
-              For other pet loss poems, not just Rainbow Bridge,{" "}
-              <Link
-                href="/poems-for-pet-loss"
-                className="underline underline-offset-4 hover:no-underline"
-                style={{ color: "var(--color-accent-primary)" }}
-              >
-                there&apos;s a small collection here
-              </Link>
-              .
-            </p>
-            <p>
-              If you&apos;re looking to send a sympathy card to someone
-              whose pet just died,{" "}
-              <Link
-                href="/pet-bereavement-card"
-                className="underline underline-offset-4 hover:no-underline"
-                style={{ color: "var(--color-accent-primary)" }}
-              >
-                we made a tool for that too
-              </Link>
-              . It takes a minute. It&apos;s free.
+              We&apos;re slowly building more pages — for cats, for the
+              wider collection of pet loss poems, and for sympathy cards.
+              They&apos;ll go up over the coming weeks. If you&apos;d
+              like to be told when they&apos;re ready, email
+              hello@rainbow.memorial and just say &ldquo;tell me
+              when.&rdquo;
             </p>
           </div>
 
