@@ -4,197 +4,103 @@ import { SleepingCat } from "@/components/illustrations/SleepingCat";
 import { Button } from "@/components/ui/button";
 import { HomepageHero } from "./homepage-hero";
 import { HomepageFAQ } from "./homepage-faq";
-import { TEMPLATES } from "@/lib/templates";
-import type { TemplateId } from "@/lib/templates";
 
-function CandleIcon({ size = 20, className = "" }: { size?: number; className?: string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 20 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <path
-        d="M10 1 C9 3 7.5 4.5 7.5 6 C7.5 7.7 8.6 9 10 9 C11.4 9 12.5 7.7 12.5 6 C12.5 4.5 11 3 10 1Z"
-        fill="currentColor"
-        opacity="0.9"
-      />
-      <rect x="8" y="9" width="4" height="13" rx="1.5" fill="currentColor" opacity="0.5" />
-      <line x1="10" y1="9" x2="10" y2="10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
-    </svg>
-  );
-}
 
-interface GalleryPet {
+// V1 close gallery: each card links to a real /m/[slug] page seeded into
+// the database by scripts/seed-memorials.ts. The image is the rendered
+// PNG produced by the same pipeline a real customer payment runs through,
+// so the gallery is literal proof of what they'll get.
+//
+// Order chosen for visual variety in the first row (alternating species
+// and templates visible at first glance).
+interface GalleryMemorial {
+  slug: string;
   name: string;
-  bornYear: string;
-  diedYear: string;
-  tribute: string;
-  candles: number;
-  photo: string;
-  templateId: TemplateId;
+  dates: string;
+  image: string;
 }
 
-// Real American pet names with breed-appropriate stock photos and a template
-// each, so the gallery doubles as a "this is what your memorial will look like"
-// proof-of-product.
-const GALLERY_PETS: GalleryPet[] = [
+const V1_MEMORIALS: GalleryMemorial[] = [
   {
-    name: "Buddy",
-    bornYear: "2010",
-    diedYear: "2024",
-    tribute: "The best friend I ever had",
-    candles: 142,
-    photo: "https://images.unsplash.com/photo-1552053831-71594a27632d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "rainbow_bridge",
+    slug: "charlie-2009-2024",
+    name: "Charlie",
+    dates: "2009 — 2024",
+    image: "/samples/memorial-charlie.png",
   },
   {
-    name: "Whiskers",
-    bornYear: "2015",
-    diedYear: "2025",
-    tribute: "Softest paws, loudest purr",
-    candles: 87,
-    photo: "https://images.unsplash.com/photo-1574158622682-e40e69881006?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "anniversary",
+    slug: "hazel-2010-2024",
+    name: "Hazel",
+    dates: "2010 — 2024",
+    image: "/samples/memorial-hazel.png",
   },
   {
-    name: "Duke",
-    bornYear: "2011",
-    diedYear: "2023",
-    tribute: "Always guarding the door",
-    candles: 219,
-    photo: "https://images.unsplash.com/photo-1568572933382-74d440642117?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "classic",
+    slug: "mochi-2018-2025",
+    name: "Mochi",
+    dates: "2018 — 2025",
+    image: "/samples/memorial-mochi.png",
   },
   {
-    name: "Simba",
-    bornYear: "2013",
-    diedYear: "2026",
-    tribute: "King of the sunny spot",
-    candles: 63,
-    photo: "https://images.unsplash.com/photo-1494256997604-768d1f608cac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "birthday_heaven",
+    slug: "otis-2019-2024",
+    name: "Otis",
+    dates: "2019 — 2024",
+    image: "/samples/memorial-otis.png",
   },
   {
-    name: "Shadow",
-    bornYear: "2009",
-    diedYear: "2024",
-    tribute: "Fifteen years wasn't enough",
-    candles: 341,
-    photo: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "memory",
+    slug: "bodhi-2017-2025",
+    name: "Bodhi",
+    dates: "2017 — 2025",
+    image: "/samples/memorial-bodhi.png",
   },
   {
-    name: "Daisy",
-    bornYear: "2016",
-    diedYear: "2025",
-    tribute: "Every walk was an adventure",
-    candles: 108,
-    photo: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    templateId: "rainbow_bridge",
+    slug: "pepper-2008-2024",
+    name: "Pepper",
+    dates: "2008 — 2024",
+    image: "/samples/memorial-pepper.png",
   },
 ];
 
 /**
- * Renders a memorial card the way the user's actual purchase will look —
- * template PNG as background, circular photo composited at the template's
- * photoZone, name/dates/tribute below at their respective zones.
- *
- * Position percentages are derived directly from the template config on a
- * 1080x1920 canvas, so any future tweak to TEMPLATES[].photoZone or text
- * zones flows through here automatically.
+ * Clickable card: rendered memorial PNG, then pet name + dates underneath
+ * in serif. Whole card is the link target. Subtle lift on hover, no
+ * cheesy effects.
  */
-function MemorialCard({ pet }: { pet: GalleryPet }) {
-  const tpl = TEMPLATES[pet.templateId];
-  const photoTopPct = (tpl.photoZone.y / tpl.canvasHeight) * 100;
-  const photoSizePct = (tpl.photoZone.width / tpl.canvasWidth) * 100;
-  const nameTopPct = (tpl.nameZone.y / tpl.canvasHeight) * 100;
-  const datesTopPct = (tpl.datesZone.y / tpl.canvasHeight) * 100;
-  const tributeTopPct = (tpl.tributeZone.y / tpl.canvasHeight) * 100;
-
+function MemorialCard({ memorial }: { memorial: GalleryMemorial }) {
   return (
-    <div className="space-y-2">
-      <div
-        className="relative aspect-[9/16] rounded-[12px] overflow-hidden border border-[--color-border] shadow-card"
-        style={{
-          backgroundImage: `url('${tpl.background}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        {/* Photo */}
-        <div
-          className="absolute"
+    <Link
+      href={`/m/${memorial.slug}`}
+      className="group block space-y-3 transition-transform duration-200 hover:-translate-y-0.5"
+    >
+      <div className="relative aspect-[9/16] rounded-[10px] overflow-hidden bg-white border border-[--color-border] shadow-card group-hover:shadow-[0_12px_28px_rgba(80,60,40,0.12)] transition-shadow duration-200">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={memorial.image}
+          alt={`Memorial for ${memorial.name}, ${memorial.dates}`}
+          loading="lazy"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="text-center space-y-0.5">
+        <p
           style={{
-            top: `${photoTopPct}%`,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: `${photoSizePct}%`,
-            aspectRatio: "1",
-          }}
-        >
-          <div className="w-full h-full rounded-full overflow-hidden border-[2px] border-white/50 shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={pet.photo} alt={pet.name} className="w-full h-full object-cover" />
-          </div>
-        </div>
-
-        {/* Name */}
-        <div
-          className="absolute w-full text-center px-3"
-          style={{
-            top: `${nameTopPct}%`,
-            left: 0,
             fontFamily: "var(--font-display)",
-            fontSize: "clamp(14px, 3.5vw, 22px)",
-            fontWeight: 400,
-            color: tpl.nameZone.color,
-            lineHeight: 1.1,
+            fontSize: "18px",
+            color: "var(--color-text-primary)",
           }}
         >
-          {pet.name}
-        </div>
-
-        {/* Dates */}
-        <div
-          className="absolute w-full text-center"
+          {memorial.name}
+        </p>
+        <p
           style={{
-            top: `${datesTopPct}%`,
-            left: 0,
-            fontSize: "clamp(9px, 1.8vw, 12px)",
-            color: tpl.datesZone.color,
+            fontFamily: "var(--font-display)",
+            fontSize: "13px",
+            color: "var(--color-text-tertiary)",
             letterSpacing: "0.02em",
           }}
         >
-          {pet.bornYear} — {pet.diedYear}
-        </div>
-
-        {/* Tribute */}
-        <div
-          className="absolute w-full text-center px-4"
-          style={{
-            top: `${tributeTopPct}%`,
-            left: 0,
-            fontFamily: "var(--font-display)",
-            fontStyle: "italic",
-            fontSize: "clamp(8px, 1.5vw, 11px)",
-            color: tpl.tributeZone.color,
-            lineHeight: 1.3,
-          }}
-        >
-          &ldquo;{pet.tribute}&rdquo;
-        </div>
+          {memorial.dates}
+        </p>
       </div>
-      <div className="flex items-center justify-center gap-1.5">
-        <CandleIcon size={12} className="text-[--color-accent-primary]" />
-        <span className="text-[12px] text-[--color-text-tertiary]">
-          {pet.candles} candles lit
-        </span>
-      </div>
-    </div>
+    </Link>
   );
 }
 
@@ -234,61 +140,25 @@ function AnniversaryEmailMockup() {
               className="text-[13px] text-[--color-text-primary] pt-1"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              A year with Buddy in our hearts
+              A year with Charlie in our hearts
             </p>
           </div>
           {/* Email body */}
           <div className="p-4 space-y-3">
             <p className="text-[11px] leading-relaxed text-[--color-text-secondary]">
-              Buddy,
+              Charlie,
             </p>
             <p className="text-[10px] leading-relaxed text-[--color-text-secondary]">
               It&apos;s been one year since you crossed the rainbow bridge.
             </p>
-            {/* Embedded memorial mini-render */}
-            <div
-              className="relative aspect-[9/16] w-full rounded-[6px] overflow-hidden"
-              style={{
-                backgroundImage: "url('/templates/rainbow_bridge.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              <div
-                className="absolute rounded-full overflow-hidden border-[1.5px] border-white/60"
-                style={{
-                  top: "31.7%",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  width: "44%",
-                  aspectRatio: "1",
-                }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="https://images.unsplash.com/photo-1552053831-71594a27632d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=300"
-                  alt="Buddy"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div
-                className="absolute w-full text-center"
-                style={{
-                  top: "60%",
-                  left: 0,
-                  fontFamily: "var(--font-display)",
-                  fontSize: "13px",
-                  color: "#2A2A2A",
-                }}
-              >
-                Buddy
-              </div>
-              <div
-                className="absolute w-full text-center"
-                style={{ top: "65%", left: 0, fontSize: "8px", color: "#5A5A5A" }}
-              >
-                2010 — 2024
-              </div>
+            {/* Embedded memorial mini-render — uses the actual rendered PNG */}
+            <div className="relative aspect-[9/16] w-full rounded-[6px] overflow-hidden bg-white">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/samples/memorial-charlie.png"
+                alt="Memorial for Charlie"
+                className="w-full h-full object-cover"
+              />
             </div>
             <button className="w-full bg-[--color-accent-primary] text-white text-[10px] font-medium py-2 rounded-full">
               Download
@@ -327,23 +197,33 @@ export default function Homepage() {
       {/* Hero */}
       <HomepageHero />
 
-      {/* Gallery — pre-rendered memorials showing the templates in action */}
+      {/* Gallery — clickable memorials, each links to /m/[slug] */}
       <section className="pt-[60px] pb-[80px] px-6">
         <div className="max-w-[1180px] mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <h2
-              style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "36px" }}
+            <p
+              className="text-[11px] tracking-[0.18em] uppercase"
+              style={{
+                fontFamily: "var(--font-body)",
+                color: "var(--color-text-tertiary)",
+              }}
             >
-              The pets we&apos;ve all loved and lost.
-            </h2>
-            <p className="text-[16px] text-[--color-text-secondary] max-w-[520px] mx-auto leading-relaxed">
-              Every tribute below was made by someone in grief. Every pet here was someone&apos;s
-              whole world. You are not alone.
+              Memorials
+            </p>
+            <p
+              className="text-[16px] max-w-[520px] mx-auto"
+              style={{
+                fontFamily: "var(--font-display)",
+                color: "var(--color-text-secondary)",
+                fontStyle: "italic",
+              }}
+            >
+              A few we&apos;ve made. Each links to the full page.
             </p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-6">
-            {GALLERY_PETS.map((pet) => (
-              <MemorialCard key={pet.name} pet={pet} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6 max-w-[920px] mx-auto">
+            {V1_MEMORIALS.map((m) => (
+              <MemorialCard key={m.slug} memorial={m} />
             ))}
           </div>
         </div>
@@ -445,7 +325,7 @@ export default function Homepage() {
             </p>
           </div>
           <div className="max-w-[260px] mx-auto md:mx-0 md:ml-auto">
-            <MemorialCard pet={GALLERY_PETS[5]} />
+            <MemorialCard memorial={V1_MEMORIALS[0]} />
           </div>
         </div>
       </section>

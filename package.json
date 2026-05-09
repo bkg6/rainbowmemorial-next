@@ -12,7 +12,8 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "samples:render": "tsx --tsconfig tsconfig.scripts.json scripts/render-samples.ts",
-    "orphan-check": "tsx scripts/orphan-check.ts"
+    "orphan-check": "tsx scripts/orphan-check.ts",
+    "db:seed-memorials": "tsx scripts/seed-memorials.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1041.0",
