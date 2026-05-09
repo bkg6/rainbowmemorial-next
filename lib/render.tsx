@@ -26,35 +26,39 @@ export async function renderMemorial(input: RenderInput): Promise<Buffer> {
   const template = TEMPLATES[input.templateId];
   const dates = buildDatesString(input.bornDate, input.diedDate);
 
-  const fontCormorantBold = await fetch(
-    "https://fonts.gstatic.com/s/cormorantgaramond/v22/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2"
-  ).then((r) => r.arrayBuffer());
-
-  const fontDMSans = await fetch(
-    "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriOZSCHBeHFl0.woff2"
-  ).then((r) => r.arrayBuffer());
-
   const { width, height } = { width: template.canvasWidth, height: template.canvasHeight };
   const pz = template.photoZone;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
   const isClassic = input.templateId === "classic";
 
+  // Fonts are vendored under /public/fonts so we don't depend on Google
+  // Fonts CDN's URL rotation. The previous hardcoded woff2 URLs went stale
+  // and started returning 404 HTML, which @vercel/og's font parser rejected
+  // with "Unsupported OpenType signature <!DO". Vendoring is stable forever.
+  const [fontCormorantBold, fontDMSans] = await Promise.all([
+    fetch(`${appUrl}/fonts/cormorant-garamond-400.ttf`).then((r) =>
+      r.arrayBuffer()
+    ),
+    fetch(`${appUrl}/fonts/dm-sans-400.ttf`).then((r) => r.arrayBuffer()),
+  ]);
+
+  const containerStyle: Record<string, string | number> = {
+    width,
+    height,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    position: "relative",
+    backgroundImage: isClassic
+      ? "radial-gradient(ellipse at center, #FBF6EC 0%, #F4ECDC 100%)"
+      : `url(${appUrl}${template.background})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+  if (isClassic) containerStyle.backgroundColor = "#FAF3E5";
+
   const element = (
-    <div
-      style={{
-        width,
-        height,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        position: "relative",
-        backgroundImage: isClassic
-          ? "radial-gradient(ellipse at center, #FBF6EC 0%, #F4ECDC 100%)"
-          : `url(${appUrl}${template.background})`,
-        backgroundColor: isClassic ? "#FAF3E5" : undefined,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+    <div style={containerStyle}
     >
       {/* Classic decorations: outer + inner border, paw watermark, ornamental line */}
       {isClassic && (
@@ -279,13 +283,13 @@ export async function renderOgImage(input: RenderInput): Promise<Buffer> {
   const dates = buildDatesString(input.bornDate, input.diedDate);
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
 
-  const fontCormorant = await fetch(
-    "https://fonts.gstatic.com/s/cormorantgaramond/v22/co3YmX5slCNuHLi8bLeY9MK7whWMhyjYqXtK.woff2"
-  ).then((r) => r.arrayBuffer());
-
-  const fontDMSans = await fetch(
-    "https://fonts.gstatic.com/s/dmsans/v15/rP2Hp2ywxg089UriOZSCHBeHFl0.woff2"
-  ).then((r) => r.arrayBuffer());
+  // Vendored fonts — see comment in renderMemorial above.
+  const [fontCormorant, fontDMSans] = await Promise.all([
+    fetch(`${appUrl}/fonts/cormorant-garamond-400.ttf`).then((r) =>
+      r.arrayBuffer()
+    ),
+    fetch(`${appUrl}/fonts/dm-sans-400.ttf`).then((r) => r.arrayBuffer()),
+  ]);
 
   // Anniversary uses light text on dark bg; everything else dark text on light bg
   const onDark = input.templateId === "anniversary";
