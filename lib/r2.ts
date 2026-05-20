@@ -14,7 +14,24 @@ export const r2 = new S3Client({
 });
 
 const BUCKET = process.env.R2_BUCKET_NAME ?? "rainbowmemorial";
-const PUBLIC_URL = `https://cdn.rainbow.memorial`; // update to actual R2 public domain
+
+// Read at call-time, not module-load, so we get a clear runtime error
+// (not a silently-broken URL) if the env var is missing in a particular
+// runtime. Strip any trailing slash since we re-add one when building
+// the public URL.
+function publicBaseUrl(): string {
+  const raw = process.env.R2_PUBLIC_URL;
+  if (!raw) {
+    throw new Error(
+      "R2_PUBLIC_URL is not set — cannot construct public R2 URL"
+    );
+  }
+  return raw.replace(/\/+$/, "");
+}
+
+export function publicR2Url(key: string): string {
+  return `${publicBaseUrl()}/${key}`;
+}
 
 export async function uploadToR2(
   key: string,
@@ -29,7 +46,7 @@ export async function uploadToR2(
       ContentType: contentType,
     })
   );
-  return `${PUBLIC_URL}/${key}`;
+  return publicR2Url(key);
 }
 
 export async function getFromR2(key: string): Promise<Buffer> {
