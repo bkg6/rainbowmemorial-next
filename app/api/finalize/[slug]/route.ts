@@ -53,10 +53,6 @@ export async function POST(
         buf,
         "image/png"
       );
-      await db
-        .update(pets)
-        .set({ renderedImageUrl })
-        .where(eq(pets.id, pet.id));
       didWork = true;
     }
 
@@ -74,8 +70,35 @@ export async function POST(
         buf,
         "image/png"
       );
-      await db.update(pets).set({ ogImageUrl }).where(eq(pets.id, pet.id));
       didWork = true;
+    }
+
+    // Single combined UPDATE ... RETURNING so we
+    //   (a) guarantee Drizzle executes (RETURNING forces a real round-trip),
+    //   (b) get back the matched row(s) for verification, and
+    //   (c) throw loudly if no row matched instead of silently
+    //       returning ready=true while the DB sits empty (the exact
+    //       failure mode that left muffin-2012-2026 stuck polling forever).
+    if (didWork) {
+      const updated = await db
+        .update(pets)
+        .set({ renderedImageUrl, ogImageUrl })
+        .where(eq(pets.id, pet.id))
+        .returning({
+          id: pets.id,
+          renderedImageUrl: pets.renderedImageUrl,
+          ogImageUrl: pets.ogImageUrl,
+        });
+
+      if (updated.length === 0) {
+        console.error(
+          `Finalize: UPDATE matched 0 rows for pet.id=${pet.id} slug=${slug}`
+        );
+        throw new Error(`Finalize update matched 0 rows for slug=${slug}`);
+      }
+      console.log(
+        `Finalize: persisted URLs for slug=${slug} id=${updated[0].id}`
+      );
     }
 
     // Send the confirmation email exactly once: only on the call that
