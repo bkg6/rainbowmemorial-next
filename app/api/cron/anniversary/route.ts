@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       const imageUrl = await uploadToR2(key, buffer, "image/png");
 
       await resend.emails.send({
-        from: "rainbow.memorial <hello@rainbow.memorial>",
+        from: "Hannah <hannah@rainbow.memorial>",
         to: pet.email,
         subject: `A year with ${pet.petName} in our hearts`,
         html: `

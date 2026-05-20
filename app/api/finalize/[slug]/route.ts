@@ -84,7 +84,7 @@ export async function POST(
       const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
       try {
         await resend.emails.send({
-          from: "rainbow.memorial <hello@rainbow.memorial>",
+          from: "Hannah <hannah@rainbow.memorial>",
           to: pet.email,
           subject: `${pet.petName}'s tribute is ready`,
           html: `
