@@ -4,11 +4,14 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, Download } from "lucide-react";
+import Cropper from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PawPrint } from "@/components/illustrations/PawPrint";
 import { TEMPLATES as TEMPLATE_CONFIG } from "@/lib/templates";
 import type { TemplateId } from "@/lib/templates";
+
+type PixelBox = { x: number; y: number; width: number; height: number };
 
 declare global {
   interface Window {
@@ -312,7 +315,15 @@ export default function CreatorPage() {
   const [originalPhotoUrl, setOriginalPhotoUrl] = useState<string | null>(null);
   const [croppedPhotoUrl, setCroppedPhotoUrl] = useState<string | null>(null);
   const [previewPhotoSrc, setPreviewPhotoSrc] = useState<string | null>(null);
-  const [faceDetected, setFaceDetected] = useState(true);
+
+  // Crop modal state — shown after the user picks a file, dismissed
+  // once they confirm or cancel. The pending File is kept in memory so
+  // we can POST it (alongside the box) to /api/upload on confirm.
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [pendingFileSrc, setPendingFileSrc] = useState<string | null>(null);
+  const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<PixelBox | null>(null);
 
   const [renderSrc, setRenderSrc] = useState<string | null>(null);
   const [rendering, setRendering] = useState(false);
@@ -449,8 +460,10 @@ export default function CreatorPage() {
     selectedTemplate,
   ]);
 
-  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset the input so picking the same file twice still fires onChange.
+    e.target.value = "";
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
@@ -463,26 +476,48 @@ export default function CreatorPage() {
     }
 
     setUploadError(null);
+    // Stage the file for the crop modal — actual upload waits for confirm.
     const localSrc = URL.createObjectURL(file);
-    setPreviewPhotoSrc(localSrc);
-    setOriginalPhotoUrl(localSrc);
-    setCroppedPhotoUrl(localSrc);
+    setPendingFile(file);
+    setPendingFileSrc(localSrc);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+  };
+
+  const cancelCrop = useCallback(() => {
+    if (pendingFileSrc) URL.revokeObjectURL(pendingFileSrc);
+    setPendingFile(null);
+    setPendingFileSrc(null);
+    setCroppedAreaPixels(null);
+  }, [pendingFileSrc]);
+
+  const handleCropConfirm = async () => {
+    if (!pendingFile || !croppedAreaPixels) return;
     setUploading(true);
+    setUploadError(null);
 
     try {
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", pendingFile);
+      fd.append("cropBox", JSON.stringify(croppedAreaPixels));
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       if (!res.ok) throw new Error("Upload failed");
       const data = await res.json();
-      const original = data.originalUrl ?? localSrc;
-      const cropped = data.croppedUrl ?? data.originalUrl ?? localSrc;
-      setOriginalPhotoUrl(original);
-      setCroppedPhotoUrl(cropped);
-      setPreviewPhotoSrc(cropped);
-      setFaceDetected(!!data.croppedUrl && data.croppedUrl !== data.originalUrl);
-    } catch {
-      setFaceDetected(false);
+      const publicUrl: string | undefined =
+        data.publicUrl ?? data.croppedUrl ?? data.originalUrl;
+      if (!publicUrl) throw new Error("Upload response missing publicUrl");
+
+      setOriginalPhotoUrl(data.originalUrl ?? publicUrl);
+      setCroppedPhotoUrl(publicUrl);
+      setPreviewPhotoSrc(publicUrl);
+
+      if (pendingFileSrc) URL.revokeObjectURL(pendingFileSrc);
+      setPendingFile(null);
+      setPendingFileSrc(null);
+    } catch (err) {
+      console.error("Crop upload failed:", err);
+      setUploadError("We couldn't upload that photo. Try again.");
     } finally {
       setUploading(false);
     }
@@ -616,6 +651,72 @@ export default function CreatorPage() {
         aria-label="Upload pet photo"
       />
 
+      {/* Crop modal — shown between file pick and upload. */}
+      {pendingFileSrc && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="bg-white rounded-2xl w-full max-w-[520px] p-5 shadow-xl">
+            <h3
+              className="mb-3 text-[18px]"
+              style={{ fontFamily: "var(--font-display)", fontWeight: 400 }}
+            >
+              Crop their photo
+            </h3>
+            <div className="relative h-80 w-full bg-gray-100 rounded-lg overflow-hidden">
+              <Cropper
+                image={pendingFileSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={1}
+                cropShape="round"
+                showGrid={false}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={(_, areaPixels) =>
+                  setCroppedAreaPixels(areaPixels as PixelBox)
+                }
+              />
+            </div>
+            <div className="mt-4">
+              <label className="text-[10px] tracking-[0.08em] uppercase text-[--color-text-tertiary] font-medium block mb-1">
+                Zoom
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full"
+                aria-label="Zoom"
+              />
+            </div>
+            <div className="mt-5 flex gap-2 justify-end">
+              <Button
+                variant="secondary"
+                onClick={cancelCrop}
+                disabled={uploading}
+                type="button"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCropConfirm}
+                disabled={uploading || !croppedAreaPixels}
+                type="button"
+              >
+                {uploading ? "Uploading…" : "Use this crop"}
+              </Button>
+            </div>
+            {uploadError && (
+              <p className="mt-3 text-[12px] text-[--color-text-secondary]">
+                {uploadError}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       <AnimatePresence mode="wait" initial={false}>
         {!photoUploaded ? (
           /* ──────── STATE 1 — Upload-first two-column ──────── */
@@ -742,11 +843,6 @@ export default function CreatorPage() {
                     Change photo
                   </span>
                 </button>
-                {!faceDetected && (
-                  <p className="text-[12px] text-[--color-text-secondary] -mt-2">
-                    We&apos;ll use the full photo.
-                  </p>
-                )}
               </>
             );
 

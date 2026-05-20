@@ -1,91 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
+import { randomUUID } from "crypto";
 import { uploadToR2 } from "@/lib/r2";
+import { cropFromBox, resizeAndOptimize } from "@/lib/imageProcess";
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+export const runtime = "nodejs";
+
+type CropBox = { x: number; y: number; width: number; height: number };
+
+function parseCropBox(raw: unknown): CropBox | null {
+  if (typeof raw !== "string") return null;
+  try {
+    const parsed = JSON.parse(raw);
+    const { x, y, width, height } = parsed ?? {};
+    if (
+      typeof x !== "number" ||
+      typeof y !== "number" ||
+      typeof width !== "number" ||
+      typeof height !== "number" ||
+      width <= 0 ||
+      height <= 0
+    ) {
+      return null;
+    }
+    return { x, y, width, height };
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    const cropBox = parseCropBox(formData.get("cropBox"));
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const mimeType = file.type || "image/jpeg";
-
-    // Upload original to R2
-    const originalKey = `originals/${Date.now()}-${file.name.replace(/[^a-z0-9.]/gi, "_")}`;
-    const originalUrl = await uploadToR2(originalKey, buffer, mimeType);
-
-    // Upload to Cloudinary for face detection
-    const cloudinaryResult = await new Promise<{
-      secure_url: string;
-      faces?: number[][];
-      public_id: string;
-    }>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            resource_type: "image",
-            detection: "adv_face",
-            faces: true,
-            folder: "rainbowmemorial",
-          },
-          (err, result) => {
-            if (err) reject(err);
-            else resolve(result as { secure_url: string; faces?: number[][]; public_id: string });
-          }
-        )
-        .end(buffer);
-    });
-
-    // Generate face-cropped URL using Cloudinary transformations
-    let croppedUrl = cloudinaryResult.secure_url;
-    const hasFaces =
-      cloudinaryResult.faces && cloudinaryResult.faces.length > 0;
-
-    if (hasFaces) {
-      croppedUrl = cloudinary.url(cloudinaryResult.public_id, {
-        transformation: [
-          {
-            width: 800,
-            height: 800,
-            gravity: "face",
-            crop: "thumb",
-            zoom: "0.8",
-          },
-          { radius: "max" },
-          { fetch_format: "png", quality: "auto" },
-        ],
-      });
-    } else {
-      croppedUrl = cloudinary.url(cloudinaryResult.public_id, {
-        transformation: [
-          { width: 800, height: 800, crop: "fill", gravity: "center" },
-          { radius: "max" },
-          { fetch_format: "png", quality: "auto" },
-        ],
-      });
+    if (!cropBox) {
+      return NextResponse.json(
+        { error: "Missing or invalid cropBox" },
+        { status: 400 }
+      );
     }
 
-    // Store the cropped version in R2
-    const croppedRes = await fetch(croppedUrl);
-    const croppedBuffer = Buffer.from(await croppedRes.arrayBuffer());
-    const croppedKey = `cropped/${Date.now()}-cropped.png`;
-    const croppedR2Url = await uploadToR2(croppedKey, croppedBuffer, "image/png");
+    const arrayBuffer = await file.arrayBuffer();
+    const inputBuffer = Buffer.from(arrayBuffer);
 
+    // Razorpay order doesn't exist yet at upload time, so namespace with a UUID.
+    const id = randomUUID();
+
+    const cropped = await cropFromBox(inputBuffer, cropBox);
+    const optimized = await resizeAndOptimize(cropped, {
+      width: 1080,
+      height: 1080,
+      format: "jpeg",
+    });
+
+    const key = `uploads/${id}/photo.jpg`;
+    const publicUrl = await uploadToR2(key, optimized, "image/jpeg");
+
+    // originalUrl is kept as an alias of publicUrl so the downstream
+    // checkout/verify-and-create path (which still treats originalPhotoUrl
+    // as a notNull column) continues to work. The customer now controls
+    // the crop manually, so there's no separate "original" worth keeping.
     return NextResponse.json({
-      originalUrl,
-      croppedUrl: croppedR2Url,
-      hasFace: hasFaces,
+      publicUrl,
+      originalUrl: publicUrl,
+      croppedUrl: publicUrl,
     });
   } catch (err) {
     console.error("Upload error:", err);
