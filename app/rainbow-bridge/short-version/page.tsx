@@ -204,7 +204,7 @@ export default function ShortVersionPage() {
             </p>
             <p>
               If anything on this page reads off, please email
-              hello@rainbow.memorial.
+              hannah@rainbow.memorial.
             </p>
           </footer>
         </article>

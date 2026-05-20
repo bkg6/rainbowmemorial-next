@@ -137,10 +137,10 @@ export function SuccessVerifying({ orderId, paymentId, signature }: Props) {
             <p className="text-[13px]">
               Email{" "}
               <a
-                href={`mailto:hello@rainbow.memorial?subject=Payment%20${paymentId}&body=Order%20ID:%20${orderId}%0APayment%20ID:%20${paymentId}`}
+                href={`mailto:hannah@rainbow.memorial?subject=Payment%20${paymentId}&body=Order%20ID:%20${orderId}%0APayment%20ID:%20${paymentId}`}
                 className="underline font-medium"
               >
-                hello@rainbow.memorial
+                hannah@rainbow.memorial
               </a>{" "}
               with this payment ID and we&apos;ll fix it by hand within 24h:
             </p>

@@ -424,7 +424,7 @@ export default function RainbowBridgePage() {
               wider collection of pet loss poems, and for sympathy cards.
               They&apos;ll go up over the coming weeks. If you&apos;d
               like to be told when they&apos;re ready, email
-              hello@rainbow.memorial and just say &ldquo;tell me
+              hannah@rainbow.memorial and just say &ldquo;tell me
               when.&rdquo;
             </p>
           </div>
@@ -461,7 +461,7 @@ export default function RainbowBridgePage() {
             </p>
             <p>
               If you find anything on this page inaccurate, or that
-              doesn&apos;t sit right, please email hello@rainbow.memorial.
+              doesn&apos;t sit right, please email hannah@rainbow.memorial.
             </p>
           </footer>
         </article>

@@ -398,7 +398,7 @@ export default function WhoWroteRainbowBridgePage() {
             </p>
             <p>
               If you find anything on this page inaccurate, please email
-              hello@rainbow.memorial.
+              hannah@rainbow.memorial.
             </p>
           </footer>
         </article>

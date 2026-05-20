@@ -131,7 +131,7 @@ function AnniversaryEmailMockup() {
                   rainbow.memorial
                 </p>
                 <p className="text-[9px] text-[--color-text-tertiary] truncate">
-                  hello@rainbow.memorial
+                  hannah@rainbow.memorial
                 </p>
               </div>
               <span className="text-[9px] text-[--color-text-tertiary]">9:00 AM</span>
@@ -383,7 +383,7 @@ export default function Homepage() {
             </p>
           </div>
           <div className="flex gap-8 text-[13px] text-[--color-text-secondary]">
-            <a href="mailto:hello@rainbow.memorial" className="hover:text-[--color-accent-primary] transition-colors">Contact</a>
+            <a href="mailto:hannah@rainbow.memorial" className="hover:text-[--color-accent-primary] transition-colors">Contact</a>
             <a href="/privacy" className="hover:text-[--color-accent-primary] transition-colors">Privacy</a>
             <a href="/terms" className="hover:text-[--color-accent-primary] transition-colors">Terms</a>
           </div>

@@ -68,7 +68,7 @@ export function SuccessPending({ slug, petName }: Props) {
         {errorMsg && (
           <p className="text-[13px] text-[--color-text-secondary]">
             Still working on it — if this page hasn&apos;t loaded after a minute,
-            email us at hello@rainbow.memorial with your payment confirmation.
+            email us at hannah@rainbow.memorial with your payment confirmation.
           </p>
         )}
       </div>
