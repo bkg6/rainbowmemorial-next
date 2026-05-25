@@ -639,6 +639,15 @@ export function MemorialPageClient({
               About the Rainbow Bridge
             </Link>
           </p>
+          <p
+            className="text-[11px]"
+            style={{
+              fontFamily: "var(--font-body)",
+              color: "var(--color-text-tertiary)",
+            }}
+          >
+            Informed by the work of Marty Tousley and Wallace Sife.
+          </p>
         </div>
       </footer>
     </div>

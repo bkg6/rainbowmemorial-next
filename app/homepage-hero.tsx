@@ -10,7 +10,7 @@ export function HomepageHero() {
         {/* Left */}
         <div className="space-y-8">
           <p className="text-[13px] tracking-[0.06em] uppercase text-[--color-text-secondary]">
-            For the ones who made life bigger
+            A place for the pet who was yours
           </p>
           <h1
             className="text-[44px] md:text-[72px]"
@@ -21,16 +21,16 @@ export function HomepageHero() {
               fontWeight: 400,
             }}
           >
-            For the day you weren&apos;t ready for.
+            Make a place for them to live on.
           </h1>
           <p className="text-[19px] text-[--color-text-secondary] leading-relaxed max-w-[480px]">
-            Upload your favorite photo. Watch their face appear inside a Rainbow Bridge tribute.
-            Share it with everyone who loved them.
+            Upload one photo. We&apos;ll make them a memorial that lives at its own link — yours
+            to keep, yours to share.
           </p>
           <div className="space-y-3">
             <Link href="/create">
               <Button className="text-[17px] min-h-[56px] px-9 py-[18px]">
-                Make their tribute
+                Make their memorial
               </Button>
             </Link>
             <p className="text-[14px]" style={{ color: "#888888" }}>

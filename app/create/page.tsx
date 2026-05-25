@@ -769,7 +769,7 @@ export default function CreatorPage() {
                   />
                   <div className="grid grid-cols-2 gap-4">
                     <Input
-                      label="When they came into your life"
+                      label="When they found you"
                       type="date"
                       value={form.bornDate}
                       onChange={(e) => setForm((f) => ({ ...f, bornDate: e.target.value }))}
@@ -783,8 +783,8 @@ export default function CreatorPage() {
                   </div>
                   <div>
                     <Input
-                      label="One thing you'd want everyone to know about them (optional)"
-                      placeholder="Something you'd want everyone to know about them"
+                      label="One line that was them (optional)"
+                      placeholder="Something only you would have said about them"
                       value={form.tributeLine}
                       onChange={(e) =>
                         setForm((f) => ({ ...f, tributeLine: e.target.value.slice(0, 60) }))

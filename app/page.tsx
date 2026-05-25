@@ -189,7 +189,7 @@ export default function Homepage() {
             </span>
           </Link>
           <Link href="/create">
-            <Button className="px-6 py-3.5 min-h-[44px] text-[15px]">Make a tribute</Button>
+            <Button className="px-6 py-3.5 min-h-[44px] text-[15px]">Make their memorial</Button>
           </Link>
         </div>
       </nav>
@@ -218,7 +218,7 @@ export default function Homepage() {
                 fontStyle: "italic",
               }}
             >
-              A few we&apos;ve made. Each links to the full page.
+              Real memorials from families who came back to share them.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 md:gap-6 max-w-[920px] mx-auto">
@@ -241,18 +241,18 @@ export default function Homepage() {
             {[
               {
                 step: "01",
-                title: "Share their photo",
-                body: "Upload one favorite photo. We'll do the rest — crop, frame, and place their face inside a beautiful template.",
+                title: "Share one photo",
+                body: "Upload your favorite. We crop, frame, and place them inside a quiet memorial template.",
               },
               {
                 step: "02",
-                title: "Watch them appear",
-                body: "Their face renders inside a dignified memorial template, in real time. You'll see it before you spend a cent.",
+                title: "See it before you pay",
+                body: "The memorial renders in real time. If it doesn't feel right, you don't pay. It's that simple.",
               },
               {
                 step: "03",
-                title: "Share with everyone who loved them",
-                body: "Download the full-resolution file, post to Instagram Story, and send the memorial link to family.",
+                title: "Share the link, or keep it close",
+                body: "Post it to Instagram. Send it to family. Or just keep it for yourself — the page stays at the same link, always.",
               },
             ].map((step) => (
               <div key={step.title} className="text-center space-y-4">
@@ -287,9 +287,9 @@ export default function Homepage() {
               You won&apos;t have to remember alone.
             </h2>
             <p className="text-[17px] text-[--color-text-secondary] leading-[1.7] max-w-[520px]">
-              On the anniversary of their passing, a quiet tribute will arrive in your inbox.
-              Already made. Ready to share. You won&apos;t have to do anything — and you
-              won&apos;t have to remember the date by yourself.
+              On the anniversary of their passing, a quiet email arrives. The memorial is
+              already there, ready when you are. You don&apos;t have to do anything. You
+              don&apos;t have to remember the date alone.
             </p>
           </div>
           <div className="flex justify-center">
@@ -314,8 +314,8 @@ export default function Homepage() {
             </h2>
             <p className="text-[17px] text-[--color-text-secondary] leading-[1.8]">
               There&apos;s a place pets go when they leave us — a meadow with soft grass and warm
-              light, where they wait until we meet them again. The story has comforted families
-              for decades. We made tributes for that meadow. Bring their face into it.
+              light, where they wait until we meet them again. The story is older than the
+              internet. We made a memorial template for that meadow. Bring their face into it.
             </p>
             <p
               className="text-[11px] tracking-[0.08em] uppercase text-[--color-text-tertiary] leading-[1.7] pt-2"
@@ -354,7 +354,7 @@ export default function Homepage() {
             Take 90 seconds. Make something beautiful for them.
           </p>
           <Link href="/create">
-            <Button className="min-h-[56px] px-10 text-[17px]">Make their tribute</Button>
+            <Button className="min-h-[56px] px-10 text-[17px]">Make their memorial</Button>
           </Link>
           <div className="pt-6 opacity-20">
             <SleepingCat size={64} className="text-[--color-background] mx-auto" />
@@ -390,6 +390,9 @@ export default function Homepage() {
         </div>
         <p className="text-center text-[11px] text-[--color-text-tertiary] mt-6">
           © 2026 rainbow.memorial
+        </p>
+        <p className="text-center text-[11px] text-[--color-text-tertiary] mt-2">
+          Informed by the work of Marty Tousley and Wallace Sife.
         </p>
       </footer>
     </div>

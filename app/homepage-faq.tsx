@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 const FAQ_ITEMS = [
   {
     q: "How much does it cost?",
-    a: "$24.99, one time. No subscription. No renewal. You pay once and the memorial is yours forever.",
+    a: "$24.99 once. No subscription, ever. You pay once and the memorial is yours forever.",
   },
   {
     q: "Do I need an account?",
-    a: "No. You upload your photo, enter a few details, pay, and receive the tribute. That's the entire flow. We use your email from payment to send you the files.",
+    a: "No account needed to make one. You upload your photo, enter a few details, pay, and receive the tribute. That's the entire flow. We use your email from payment to send you the files.",
   },
   {
     q: "What file formats can I upload?",
@@ -23,7 +23,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What's the anniversary email?",
-    a: "One year after the date you entered, we'll send you a freshly rendered tribute with a different template. It arrives ready to share — you don't have to do anything.",
+    a: "You won't have to remember alone. One year after the date you entered, we'll send you a freshly rendered tribute with a different template. It arrives ready to share — you don't have to do anything.",
   },
 ];
 

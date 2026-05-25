@@ -5,10 +5,9 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 const PAGE_PATH = "/rainbow-bridge/dogs";
 const PAGE_URL = `${APP_URL}${PAGE_PATH}`;
 
-const TITLE =
-  "The Rainbow Bridge for Dogs — A Page for Anyone Whose Dog Just Died";
+const TITLE = "Rainbow Bridge Poem for Dogs";
 const DESCRIPTION =
-  "The Rainbow Bridge poem, the Edna Clyne-Rekhy story, and what helps tonight when your dog has just died. Written for someone reading this in the middle of the night.";
+  "The Rainbow Bridge poem for the dog you just lost, and what to do in the first night and the days after.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
   },
 };
 
-const jsonLd = {
+const articleJsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
   headline: TITLE,
@@ -38,10 +37,41 @@ const jsonLd = {
     name: "Rainbow Memorial",
     url: APP_URL,
   },
-  datePublished: "2026-05-06",
-  dateModified: "2026-05-06",
+  datePublished: "2026-05-26",
+  dateModified: "2026-05-26",
   description: DESCRIPTION,
   mainEntityOfPage: { "@type": "WebPage", "@id": PAGE_URL },
+};
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "Is the Rainbow Bridge religious?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. Edna Clyne-Rekhy wrote it as a personal vision, not a religious text. Religious and non-religious dog owners both find comfort in it. It belongs to no tradition in particular.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I read the Rainbow Bridge poem at a funeral or burial?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. Many families do, often in the backyard with the people who knew the dog. There is no requirement to read it any particular way.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Will the grief of losing a dog stop hurting?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Not soon. The shape of it changes with time. The dog you lost was real, and what you're feeling is the size of that. Don't measure your grief against anyone else's calendar.",
+      },
+    },
+  ],
 };
 
 const linkClass = "underline underline-offset-4 hover:no-underline";
@@ -52,7 +82,11 @@ export default function RainbowBridgeDogsPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <main
         className="min-h-screen w-full"
@@ -63,265 +97,183 @@ export default function RainbowBridgeDogsPage() {
         }}
       >
         <article
-          className="rb-article mx-auto px-6 py-16 md:py-24"
+          className="mx-auto px-6 py-16 md:py-24"
           style={{ maxWidth: 680 }}
         >
-          <h1 className="mb-10">The Rainbow Bridge, for Dogs</h1>
+          <h1 className="mb-10">Rainbow Bridge Poem for Dogs</h1>
 
           <div className="space-y-6">
             <p>
-              If you found this page tonight because your dog just died,
-              I&apos;m sorry. I&apos;ll keep this short. The poem is
-              below. So is what helps, when nothing helps.
-            </p>
-            <p>You don&apos;t have to read all of it.</p>
-          </div>
-
-          <h2 className="mt-14 mb-6">
-            What the Rainbow Bridge says about dogs
-          </h2>
-          <div className="space-y-6">
-            <p>
-              The Rainbow Bridge is a small piece of writing — about 200
-              words — written in 1959 by a 19-year-old Scottish girl
-              named Edna Clyne-Rekhy, the day after her Labrador Major
-              died in her arms. We won&apos;t reproduce her full text
-              here. It is hers, and the{" "}
-              <a
-                href="https://www.nationalgeographic.com/animals/article/rainbow-bridge-poem-pet-death-mourning-origin-revealed"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClass}
-                style={linkStyle}
-              >
-                most accurate published version is through National
-                Geographic
-              </a>
-              . What she wrote, in our own words, is this:
-            </p>
-            <p>
-              There is a meadow, just on the near side of heaven. The
-              dogs we have lost go there when they die. The old ones run
-              again. The hurt ones are made whole. They eat, they play,
-              they are warm. They are content, except for one thing: each
-              of them misses someone they had to leave behind.
-            </p>
-            <p>
-              One day in that meadow, a dog stops mid-stride and looks
-              up. Their eyes are bright. Their ears are forward. Then
-              they run — full, glad, headlong — toward someone they
-              recognize. The person they were waiting for has finally
-              come. The dog leaps into their arms. They cling to each
-              other. There is no need for words. They cross the bridge
-              together.
-            </p>
-            <p>That is what Edna wrote.</p>
-            <p>
-              She wrote it for Major. It happens to fit every dog that
-              has ever been loved.
+              If you&apos;re reading this tonight, your dog is gone. You came
+              here for the poem.
             </p>
           </div>
 
-          <h2 className="mt-14 mb-6">Why dogs especially</h2>
-          <div className="space-y-6">
-            <p>Dogs do something to us that most other animals don&apos;t.</p>
+          <div
+            className="mt-10 space-y-6"
+            style={{ fontFamily: "var(--font-serif, var(--font-display))" }}
+          >
             <p>
-              It is not just that they are loyal — most pets, in their
-              way, are loyal. It is that a dog is <em>with you</em>. A
-              dog watches what you&apos;re doing and orients toward it. A
-              dog notices when your day was bad. A dog knows the sound of
-              your car at the bottom of the street. A dog leans against
-              your leg without being asked.
+              There&apos;s a meadow somewhere your dog is in now.
             </p>
             <p>
-              When that animal dies, the absence is everywhere. Not just
-              in the corner where the bed was. In the doorway, where they
-              used to be standing every time you came home. In the
-              kitchen, where they used to follow you for breakfast
-              scraps. In the stairwell, in the hallway, on the couch. The
-              whole shape of the day was built around them, and now the
-              shape is wrong.
+              Their pain is gone. Their old body works again. If they
+              couldn&apos;t see at the end, they can see now. If they
+              couldn&apos;t walk, they&apos;re running. They are warm, they
+              are fed, they are surrounded by other dogs who once loved
+              someone too.
+            </p>
+            <p>They play all day. They eat well. They rest in the shade.</p>
+            <p>
+              But there&apos;s one thing they&apos;re still missing. They
+              miss you.
             </p>
             <p>
-              That is what makes losing a dog so specifically hard. The
-              grief is not located in one place. It is distributed across
-              every room, every routine, every hour you used to share.
+              Sometimes they look up across the meadow, at the place where
+              the people come from. They watch. They wait. They go back to
+              playing. They watch again.
             </p>
             <p>
-              This is why people often feel more wrecked over a dog than
-              they were prepared for.
-            </p>
-          </div>
-
-          <h2 className="mt-14 mb-6">
-            Things people often feel after a dog dies, that they&apos;re
-            afraid to say
-          </h2>
-          <div className="space-y-6">
-            <p>
-              You may feel more shattered than you were when a relative
-              died. This is not a moral failing. Your dog was woven into
-              every hour of your day. The bond was different. Not less.
-              Different.
+              One day they look up and see you. They know it&apos;s you from
+              across the field. They run, and they don&apos;t stop running.
             </p>
             <p>
-              You may feel relief along with the sadness, especially
-              after a long illness. Relief that they are not suffering.
-              Relief that the daily work of caring for a dying dog is
-              done. The relief is not betrayal. It is love finishing its
-              job.
+              When they reach you, you&apos;ll be on the ground holding
+              them. Their face against your face. Their old body strong
+              again, the way you remember it best.
             </p>
             <p>
-              You may feel furious. At the vet. At yourself. At God. At
-              the disease. At no one in particular. You may replay the
-              last week in your head, looking for what you missed. This
-              is what minds do when something this big happens. It will
-              quiet down. Slowly.
+              No one will tell you to let go. No one will tell you it&apos;s
+              time.
             </p>
             <p>
-              You may feel guilty about the moments you snapped at them.
-              The walks you cut short. The times you were tired. None of
-              those moments mattered to your dog. They never thought
-              about them again. They forgave you in the same breath.
-            </p>
-            <p>
-              You may feel like you can&apos;t tell anyone how bad this
-              is, because they won&apos;t get it. Some of them
-              won&apos;t. That doesn&apos;t mean you&apos;re wrong. The
-              grief counselor Marty Tousley calls this{" "}
-              <em>disenfranchised grief</em> — grief that the surrounding
-              world doesn&apos;t fully recognize. It is becoming less so,
-              slowly. But on a Tuesday afternoon at work, surrounded by
-              people who didn&apos;t know your dog, it can still feel
-              very lonely.
-            </p>
-            <p>
-              None of what you are feeling is too much. None of it is too
-              little.
+              When you both stand up, you&apos;ll walk together over the
+              bridge. You won&apos;t be apart again.
             </p>
           </div>
 
-          <h2 className="mt-14 mb-6">
-            What might help, if you want to share the poem
-          </h2>
+          <div className="mt-10 space-y-6">
+            <p>
+              You can read it again. You can print it. You can read it out
+              loud to your dog tonight if you want to. There is no wrong way
+              to do this.
+            </p>
+          </div>
+
+          <h2 className="mt-14 mb-6">The first night</h2>
           <div className="space-y-6">
-            <p>Many people share the Rainbow Bridge poem in three ways:</p>
             <p>
-              <strong>
-                On the day they post about their dog on social media.
-              </strong>{" "}
-              Usually with one photo. Often the caption is just the
-              dog&apos;s name and dates, plus a few lines from the poem.
-              You don&apos;t have to write more than that. Less is often
-              better.
+              The first night is the hardest. The water bowl is in the wrong
+              place. The bed still has the shape of them in it. The bedroom
+              door is wider than it should be.
             </p>
             <p>
-              <strong>At a small farewell, at home.</strong> Some
-              families read the poem out loud the evening their dog died,
-              sitting in the room where the dog used to sleep. A candle,
-              a photo, the poem, then quiet. Children often handle this
-              better than adults do.
+              Tonight, you don&apos;t have to do anything. The bed can stay
+              where it is. The water bowl doesn&apos;t have to be poured
+              out. The collar can stay on the bedside table. The leash by
+              the door doesn&apos;t have to come down. None of these things
+              need to be moved tonight or anytime soon.
             </p>
             <p>
-              <strong>
-                In a sympathy card to someone whose dog died.
-              </strong>{" "}
-              A few lines, hand-written. Don&apos;t try to explain or fix
-              anything. The poem is doing the work.
+              If looking at their things hurts and you want them put away,
+              that&apos;s also okay. There is no correct order here.
+              Whichever version of you wakes up tomorrow morning will know
+              what to do next.
+            </p>
+          </div>
+
+          <h2 className="mt-14 mb-6">The days that come after</h2>
+          <div className="space-y-6">
+            <p>
+              You&apos;ll reach for them before you remember. You&apos;ll
+              stand in the kitchen at the time you used to feed them, and
+              your hand will move toward the cupboard without your
+              permission. This will happen for weeks, less often as months
+              pass, and it won&apos;t fully stop in the first year.
             </p>
             <p>
-              If you&apos;d like a{" "}
-              <Link
-                href="/rainbow-bridge/short-version"
-                className={linkClass}
-                style={linkStyle}
-              >
-                shorter version of the poem that fits on a card
+              If you have other pets in the house, they&apos;re searching
+              too. Watch for them at the door, in the spot your dog used to
+              sleep, or near the food bowl. They knew your dog. They are
+              looking for them.
+            </p>
+            <p>
+              There is no schedule for any of this. Some mornings will be
+              harder than others, and some will surprise you with how much
+              it still hurts months in. That doesn&apos;t mean you&apos;re
+              doing it wrong. It means you loved them.
+            </p>
+          </div>
+
+          <h2 className="mt-14 mb-6">A place for them</h2>
+          <div className="space-y-6">
+            <p>
+              You can{" "}
+              <Link href="/create" className={linkClass} style={linkStyle}>
+                make a page for your dog
               </Link>
-              , we have one.
-            </p>
-          </div>
-
-          <h2 className="mt-14 mb-6">
-            What might help tonight, if you don&apos;t want to do anything
-          </h2>
-          <div className="space-y-6">
-            <p>
-              You don&apos;t have to do anything tonight. That is the
-              most honest sentence on this page.
+              . A photo of them, their name, the years they were with you,
+              and anything else you want to write. The page has a permanent
+              address. It stays up. Anyone who knew them can visit — family,
+              the kids, the neighbor who used to feed them when you
+              traveled.
             </p>
             <p>
-              If you want to do something small, here are a few things
-              people have found useful:
-            </p>
-            <p>
-              <strong>Light a candle.</strong> Just so the room has a
-              small warm point in it. Sit with it for a few minutes.
-            </p>
-            <p>
-              <strong>Look at one photo.</strong> One. Not the whole
-              camera roll. Let yourself cry if you want to. Don&apos;t,
-              if you don&apos;t.
-            </p>
-            <p>
-              <strong>Write down one specific thing about them.</strong>{" "}
-              The way they tilted their head when you said <em>walk</em>.
-              The exact sound they made when they stretched. The spot on
-              the couch they always claimed. One concrete thing. Not a
-              eulogy. One sentence.
-            </p>
-            <p>
-              <strong>Make a small image.</strong> This is what we made.
-              If you&apos;d like, you can take one photo of your dog and
-              turn it into a simple memorial image — to keep, to share,
-              or to print. It takes about a minute. There is no pressure.
+              A year from now, on the day you lost them, an email will
+              arrive so you don&apos;t have to remember the date alone.
             </p>
             <p>
               <Link href="/create" className={linkClass} style={linkStyle}>
-                Make a memorial for your dog →
+                Create their memorial page →
               </Link>
-            </p>
-            <p>
-              You don&apos;t need a memorial for your love to count. You
-              don&apos;t need anything for your love to count.
             </p>
           </div>
 
-          <h2 className="mt-14 mb-6">Where to go from here</h2>
+          <h2 className="mt-14 mb-6">About this poem</h2>
           <div className="space-y-6">
             <p>
-              If you&apos;d like the{" "}
+              The Rainbow Bridge has been part of pet grief tradition for
+              over sixty years. The original was written in 1959 by a
+              Scottish teenager, Edna Clyne-Rekhy, after her own dog Major
+              died. The version above is ours.{" "}
               <Link
                 href="/rainbow-bridge/who-wrote-the-rainbow-bridge-poem"
                 className={linkClass}
                 style={linkStyle}
               >
-                longer story of how the Rainbow Bridge poem was written
+                Edna&apos;s full story is here
               </Link>
-              , we have a fuller page on Edna and Major.
-            </p>
-            <p>
-              If you want a{" "}
-              <Link
-                href="/rainbow-bridge/short-version"
-                className={linkClass}
-                style={linkStyle}
-              >
-                shorter version of the poem that fits on a card
-              </Link>
-              , it&apos;s here.
-            </p>
-            <p>
-              For the{" "}
+              , and you can read more on{" "}
               <Link
                 href="/rainbow-bridge"
                 className={linkClass}
                 style={linkStyle}
               >
-                main Rainbow Bridge page
+                how the Rainbow Bridge entered pet grief
               </Link>
-              , with the full poem context and what helps tonight,
-              it&apos;s here.
+              .
+            </p>
+          </div>
+
+          <h2 className="mt-14 mb-6">Questions people sometimes ask</h2>
+          <div className="space-y-6">
+            <p>
+              <strong>Is the Rainbow Bridge religious?</strong> No. Edna
+              wrote it as a personal vision, not a religious text. Religious
+              and non-religious dog owners both find comfort in it. It
+              belongs to no tradition in particular.
+            </p>
+            <p>
+              <strong>Can I read it at a funeral or burial?</strong> Yes.
+              Many families do, often in the backyard with the people who
+              knew the dog. There is no requirement to read it any
+              particular way.
+            </p>
+            <p>
+              <strong>Will this stop hurting?</strong> Not soon. The shape
+              of it will change with time. But the dog you lost was real,
+              and what you&apos;re feeling is the size of that. Don&apos;t
+              measure your grief against anyone else&apos;s calendar.
             </p>
           </div>
 
@@ -331,17 +283,7 @@ export default function RainbowBridgeDogsPage() {
           />
 
           <footer className="space-y-5 italic">
-            <p>
-              Written by Hannah Wright, on behalf of Rainbow Memorial.
-              The voice on this page draws from the work of Marty
-              Tousley, Wallace Sife, and the team at Lap of Love. Edna
-              Clyne-Rekhy&apos;s story follows the reporting of Paul
-              Koudounaris and National Geographic (2023).
-            </p>
-            <p>
-              If anything on this page reads off, please email
-              hannah@rainbow.memorial.
-            </p>
+            <p>Written by Hannah Wright, on behalf of Rainbow Memorial.</p>
           </footer>
         </article>
       </main>
