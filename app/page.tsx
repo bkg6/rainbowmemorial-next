@@ -1,9 +1,28 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PawPrint } from "@/components/illustrations/PawPrint";
 import { SleepingCat } from "@/components/illustrations/SleepingCat";
 import { Button } from "@/components/ui/button";
 import { HomepageHero } from "./homepage-hero";
 import { HomepageFAQ } from "./homepage-faq";
+
+const HOME_TITLE = "Rainbow Memorial — A Place to Remember the Pet You Lost";
+const HOME_DESCRIPTION =
+  "Make a permanent memorial page for the pet you lost. Upload one photo and they live at their own link, yours to keep and share.";
+
+export const metadata: Metadata = {
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+  twitter: {
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+  },
+};
 
 
 // V1 close gallery: each card links to a real /m/[slug] page seeded into

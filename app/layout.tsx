@@ -6,14 +6,14 @@ import { organizationJsonLd } from "@/config/footer";
 export const metadata: Metadata = {
   title: "Rainbow Memorial — A Place to Remember the Pet You Lost",
   description:
-    "Make a permanent memorial page for the pet you lost. Upload one photo. We'll make a tribute that lives at its own link, yours to keep and share. $24.99 once.",
+    "Make a permanent memorial page for the pet you lost. Upload one photo and they live at their own link, yours to keep and share.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial"
   ),
   openGraph: {
     title: "Rainbow Memorial — A Place to Remember the Pet You Lost",
     description:
-      "Make a permanent memorial page for the pet you lost. Upload one photo. We'll make a tribute that lives at its own link, yours to keep and share. $24.99 once.",
+      "Make a permanent memorial page for the pet you lost. Upload one photo and they live at their own link, yours to keep and share.",
     images: [
       {
         url: "https://images.unsplash.com/photo-1768676758480-44e11e5c164a?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&w=1200&h=630",
