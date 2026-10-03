@@ -1,4 +1,4 @@
-import PdfButton from "../_lib/PdfButton";
+import PdfButton from "../../_lib/PdfButton";
 import {
   A,
   ArticleShell,
@@ -8,7 +8,7 @@ import {
   Section,
   buildMetadata,
   type ArticleSpec,
-} from "../_lib/article";
+} from "../../_lib/article";
 import { CHECKLIST } from "./items";
 
 const spec: ArticleSpec = {

@@ -15,3 +15,8 @@ One line per page shipped. Add the GSC "Request Indexing" timestamp when submitt
 | 2026-10-03 | /quality-of-life/questionnaire | (pending merge) | next build clean, 37/37 static | pending (run after deploy) | yes, priority 0.8 | n/a (not in footer column) | pending |
 | 2026-10-03 | /quality-of-life/saying-goodbye-to-your-dog | (pending merge) | next build clean, 37/37 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |
 | 2026-10-03 | /quality-of-life/when-to-euthanize-dog-with-kidney-failure | (pending merge) | next build clean, 37/37 static | pending (run after deploy) | yes, priority 0.8 | n/a (not in footer column) | pending |
+| 2026-10-03 | /pet-bereavement-card | (pending merge) | next build clean, 42/42 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |
+| 2026-10-03 | /sympathy-message-for-pet-loss | (pending merge) | next build clean, 42/42 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |
+| 2026-10-03 | /rainbow-bridge/crossing | (pending merge) | next build clean, 42/42 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |
+| 2026-10-03 | /rainbow-bridge/cats | (pending merge) | next build clean, 42/42 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |
+| 2026-10-03 | /poems/loss-of-a-pet | (pending merge) | next build clean, 42/42 static | pending (run after deploy) | yes, priority 0.8 | yes | pending |

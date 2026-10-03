@@ -6,6 +6,7 @@ export const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ?? "https://rainbow.memorial";
 
 export const OG_IMAGE = "/og/quality-of-life.jpg";
+export const OG_IMAGE_SITE = "/og/rainbow-memorial.jpg";
 export const CLUSTER_DATE = "2026-10-03";
 export const CLUSTER_DATE_HUMAN = "October 3, 2026";
 
@@ -19,6 +20,10 @@ export type ArticleSpec = {
   datePublished: string;
   dateModified: string;
   faq: FaqItem[];
+  /** The pillar hub this page belongs to. Defaults to the quality-of-life hub. */
+  isPartOf?: { path: string; name: string };
+  /** OpenGraph image path. Defaults to the quality-of-life cluster image. */
+  ogImage?: string;
 };
 
 export function buildMetadata(spec: ArticleSpec): Metadata {
@@ -33,7 +38,7 @@ export function buildMetadata(spec: ArticleSpec): Metadata {
       url,
       type: "article",
       siteName: "Rainbow Memorial",
-      images: [{ url: OG_IMAGE, width: 1200, height: 630 }],
+      images: [{ url: spec.ogImage ?? OG_IMAGE, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
@@ -61,8 +66,8 @@ export function articleJsonLd(spec: ArticleSpec) {
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     isPartOf: {
       "@type": "WebPage",
-      "@id": `${APP_URL}/quality-of-life-scale`,
-      name: "Dog Quality of Life Scale",
+      "@id": `${APP_URL}${spec.isPartOf?.path ?? "/quality-of-life-scale"}`,
+      name: spec.isPartOf?.name ?? "Dog Quality of Life Scale",
     },
   };
 }

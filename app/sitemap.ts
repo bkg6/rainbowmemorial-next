@@ -126,6 +126,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${APP_URL}/pet-bereavement-card`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${APP_URL}/sympathy-message-for-pet-loss`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${APP_URL}/rainbow-bridge/crossing`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${APP_URL}/rainbow-bridge/cats`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${APP_URL}/poems/loss-of-a-pet`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${APP_URL}/about`,
       lastModified: now,
       changeFrequency: "yearly",

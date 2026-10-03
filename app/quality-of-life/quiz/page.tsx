@@ -8,7 +8,7 @@ import {
   Section,
   buildMetadata,
   type ArticleSpec,
-} from "../_lib/article";
+} from "../../_lib/article";
 
 const spec: ArticleSpec = {
   path: "/quality-of-life/quiz",

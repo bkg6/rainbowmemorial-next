@@ -186,20 +186,34 @@ export default function PetSympathyPage() {
               dropped at the door, a memorial page — counts.
             </p>
             <p>A few specific things that help:</p>
-            {/* TODO: wrap "Pet bereavement cards" in a link to /pet-bereavement-card when shipped */}
             <p>
               <strong>A card.</strong> A handwritten card matters more
-              than a long text message. Pet bereavement cards specifically
-              tend to read warmer than general sympathy cards because they
-              were designed for this loss. A simple card with the
+              than a long text message.{" "}
+              <Link
+                href="/pet-bereavement-card"
+                className={linkClass}
+                style={linkStyle}
+              >
+                Pet bereavement cards
+              </Link>{" "}
+              specifically tend to read warmer than general sympathy cards
+              because they were designed for this loss, and there are three
+              free printable ones on this site. A simple card with the
               pet&apos;s name written inside is enough.
             </p>
-            {/* TODO: wrap "sympathy messages for pet loss" in a link to /sympathy-message-for-pet-loss when shipped */}
             <p>
               <strong>A short message.</strong> Long messages can be hard
               to read in grief. Two sentences with the pet&apos;s name in
-              them are better than a paragraph. Examples and templates are
-              at sympathy messages for pet loss.
+              them are better than a paragraph. Examples, sorted by who you
+              are to the person, are at{" "}
+              <Link
+                href="/sympathy-message-for-pet-loss"
+                className={linkClass}
+                style={linkStyle}
+              >
+                sympathy messages for pet loss
+              </Link>
+              .
             </p>
             <p>
               <strong>A memorial page in their pet&apos;s name.</strong>{" "}
