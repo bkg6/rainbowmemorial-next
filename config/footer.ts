@@ -26,11 +26,11 @@ export const footerColumns: FooterColumn[] = [
         href: "/rainbow-bridge/who-wrote-the-rainbow-bridge-poem",
         live: true,
       },
-      { label: "For cats", href: "/rainbow-bridge/cats", live: false },
+      { label: "For cats", href: "/rainbow-bridge/cats", live: true },
       {
         label: "Crossing the Rainbow Bridge",
         href: "/rainbow-bridge/crossing",
-        live: false,
+        live: true,
       },
     ],
   },
@@ -51,7 +51,7 @@ export const footerColumns: FooterColumn[] = [
       {
         label: "Loss of a pet poems",
         href: "/poems/loss-of-a-pet",
-        live: false,
+        live: true,
       },
       {
         label: "Poems for a dog funeral",
@@ -67,13 +67,13 @@ export const footerColumns: FooterColumn[] = [
       {
         label: "Pet bereavement cards",
         href: "/pet-bereavement-card",
-        live: false,
+        live: true,
       },
       { label: "Pet grief cards", href: "/pet-grief-cards", live: false },
       {
         label: "Sympathy messages",
         href: "/sympathy-message-for-pet-loss",
-        live: false,
+        live: true,
       },
       {
         label: "Pet memorial pages",
@@ -82,6 +82,31 @@ export const footerColumns: FooterColumn[] = [
       },
       // Flip to live: true when /memorials index ships
       { label: "Browse memorials", href: "/memorials", live: false },
+    ],
+  },
+  {
+    heading: "Goodbye Decisions",
+    links: [
+      {
+        label: "Quality of Life Scale",
+        href: "/quality-of-life-scale",
+        live: true,
+      },
+      {
+        label: "Quality of life checklist",
+        href: "/quality-of-life/checklist",
+        live: true,
+      },
+      {
+        label: "Knowing when to say goodbye",
+        href: "/quality-of-life/how-to-know-when-to-put-my-dog-down",
+        live: true,
+      },
+      {
+        label: "Saying goodbye to your dog",
+        href: "/quality-of-life/saying-goodbye-to-your-dog",
+        live: true,
+      },
     ],
   },
   {

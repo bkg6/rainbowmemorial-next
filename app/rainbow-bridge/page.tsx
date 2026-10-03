@@ -420,12 +420,28 @@ export default function RainbowBridgePage() {
               , it&apos;s here.
             </p>
             <p>
-              We&apos;re slowly building more pages — for cats, for the
-              wider collection of pet loss poems, and for sympathy cards.
-              They&apos;ll go up over the coming weeks. If you&apos;d
-              like to be told when they&apos;re ready, email
-              hannah@rainbow.memorial and just say &ldquo;tell me
-              when.&rdquo;
+              If your cat has just died,{" "}
+              <Link
+                href="/rainbow-bridge/cats"
+                className="underline underline-offset-4 hover:no-underline"
+                style={{ color: "var(--color-accent-primary)" }}
+              >
+                the version told for cats is here
+              </Link>
+              , written for the quieter shape that loss takes.
+            </p>
+            <p>
+              And if you are trying to work out how to tell people, there
+              is a page on{" "}
+              <Link
+                href="/rainbow-bridge/crossing"
+                className="underline underline-offset-4 hover:no-underline"
+                style={{ color: "var(--color-accent-primary)" }}
+              >
+                what &ldquo;crossing the Rainbow Bridge&rdquo; means and how
+                to say it
+              </Link>
+              .
             </p>
           </div>
 

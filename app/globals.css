@@ -134,3 +134,43 @@
     font-size: 16px;
   }
 }
+
+/* Quality of life tool (app/quality-of-life-scale) */
+.qol-tool label {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-primary);
+}
+.qol-chips {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .qol-chips {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 6px;
+  }
+}
+.qol-chip:hover[aria-checked="false"] {
+  border-color: var(--color-text-tertiary) !important;
+  color: var(--color-text-primary) !important;
+}
+.qol-chip:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

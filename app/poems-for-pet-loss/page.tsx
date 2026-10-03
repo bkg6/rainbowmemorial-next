@@ -257,6 +257,18 @@ export default function PoemsForPetLossPage() {
               .
             </p>
             <p>
+              If you want poems that don&apos;t name a species at all, for a
+              cat or a rabbit or a horse,{" "}
+              <Link
+                href="/poems/loss-of-a-pet"
+                className={linkClass}
+                style={linkStyle}
+              >
+                the loss of a pet poems are here
+              </Link>
+              , including one for a child to read and one for the burial.
+            </p>
+            <p>
               If your pet was a dog and you&apos;d like more poems written
               specifically for a dog&apos;s passing,{" "}
               <Link

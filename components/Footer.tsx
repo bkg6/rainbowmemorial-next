@@ -53,7 +53,7 @@ export default function Footer() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-5">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           {footerColumns.map((column) => {
             const liveLinks = column.links.filter((l) => l.live);
             if (liveLinks.length === 0) return null;
