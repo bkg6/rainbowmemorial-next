@@ -348,3 +348,109 @@ export async function downloadBlankChart(weeks = 4) {
   const bytes = await doc.save();
   download(bytes, "dog-quality-of-life-chart.pdf");
 }
+
+export type ChecklistItem = { label: string; checks: string[] };
+
+/**
+ * Portrait one-page checklist: seven dimensions, each with checkboxes and
+ * a line for observations, plus a date line at the top.
+ */
+export async function downloadChecklist(items: ChecklistItem[]) {
+  const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
+  const doc = await PDFDocument.create();
+  doc.setTitle("Dog Quality of Life Checklist");
+  doc.setAuthor("Rainbow Memorial");
+  const page = doc.addPage([612, 792]);
+  const serif = await doc.embedFont(StandardFonts.TimesRoman);
+  const serifItalic = await doc.embedFont(StandardFonts.TimesRomanItalic);
+  const sans = await doc.embedFont(StandardFonts.Helvetica);
+  const sansBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  const ink = rgb(INK.r, INK.g, INK.b);
+  const muted = rgb(MUTED.r, MUTED.g, MUTED.b);
+  const rule = rgb(RULE.r, RULE.g, RULE.b);
+  const margin = 50;
+  const width = 612 - margin * 2;
+  let y = 792 - margin;
+
+  page.drawText("Dog Quality of Life Checklist", {
+    x: margin,
+    y,
+    size: 22,
+    font: serif,
+    color: ink,
+  });
+  y -= 18;
+  page.drawText("Week of ____________________", {
+    x: margin,
+    y,
+    size: 10,
+    font: sans,
+    color: muted,
+  });
+  y -= 22;
+
+  const widthOfSans = (t: string, s: number) => sans.widthOfTextAtSize(t, s);
+  for (const item of items) {
+    page.drawLine({
+      start: { x: margin, y: y + 6 },
+      end: { x: margin + width, y: y + 6 },
+      thickness: 0.6,
+      color: rule,
+    });
+    y -= 10;
+    page.drawText(item.label, {
+      x: margin,
+      y,
+      size: 11.5,
+      font: sansBold,
+      color: ink,
+    });
+    y -= 15;
+    for (const c of item.checks) {
+      page.drawRectangle({
+        x: margin,
+        y: y - 1,
+        width: 9,
+        height: 9,
+        borderColor: ink,
+        borderWidth: 0.7,
+      });
+      const lines = wrap(c, width - 20, 9, widthOfSans);
+      let ly = y;
+      for (const line of lines) {
+        page.drawText(line, { x: margin + 15, y: ly, size: 9, font: sans, color: ink });
+        ly -= 11;
+      }
+      y = ly - 2;
+    }
+    page.drawText("Noticed this week:", {
+      x: margin,
+      y,
+      size: 8,
+      font: sans,
+      color: muted,
+    });
+    page.drawLine({
+      start: { x: margin + 80, y: y - 1 },
+      end: { x: margin + width, y: y - 1 },
+      thickness: 0.5,
+      color: rule,
+    });
+    y -= 16;
+  }
+
+  page.drawText(
+    "No box decides anything. Fill this in once a week and bring the sheets to your vet.",
+    { x: margin, y: y - 4, size: 9, font: serifItalic, color: muted }
+  );
+  page.drawText(FOOTER_LINE, {
+    x: margin,
+    y: margin - 14,
+    size: 9,
+    font: serifItalic,
+    color: muted,
+  });
+
+  const bytes = await doc.save();
+  download(bytes, "dog-quality-of-life-checklist.pdf");
+}

@@ -92,21 +92,20 @@ export const footerColumns: FooterColumn[] = [
         href: "/quality-of-life-scale",
         live: true,
       },
-      // Article spokes flip to live: true as they ship
       {
         label: "Quality of life checklist",
         href: "/quality-of-life/checklist",
-        live: false,
+        live: true,
       },
       {
         label: "Knowing when to say goodbye",
         href: "/quality-of-life/how-to-know-when-to-put-my-dog-down",
-        live: false,
+        live: true,
       },
       {
         label: "Saying goodbye to your dog",
         href: "/quality-of-life/saying-goodbye-to-your-dog",
-        live: false,
+        live: true,
       },
     ],
   },

@@ -248,6 +248,59 @@ export default function QualityOfLifeScalePage() {
             </p>
           </div>
 
+          <h2 className="mt-14 mb-6">More in this series</h2>
+          <div className="space-y-6">
+            <p>
+              The scale is the centre of a set of pages written for the
+              goodbye decision, each for a different moment in it. For a
+              printable version with yes-or-no boxes, there is the{" "}
+              <Link href="/quality-of-life/checklist" className={linkClass} style={linkStyle}>
+                quality of life checklist
+              </Link>
+              , and for four weeks on one landscape page, the{" "}
+              <Link href="/quality-of-life/chart" className={linkClass} style={linkStyle}>
+                printable chart
+              </Link>
+              . If you want the questions first and the reading after, the{" "}
+              <Link href="/quality-of-life/quiz" className={linkClass} style={linkStyle}>
+                five-minute quiz
+              </Link>{" "}
+              is the same tool with less around it, and the{" "}
+              <Link href="/quality-of-life/questionnaire" className={linkClass} style={linkStyle}>
+                questionnaire
+              </Link>{" "}
+              is written for the night before a vet appointment.
+            </p>
+            <p>
+              For the decision itself, there are two pieces that do not try
+              to decide for you:{" "}
+              <Link href="/quality-of-life/how-to-know-when-to-put-my-dog-down" className={linkClass} style={linkStyle}>
+                how to know when to put your dog down
+              </Link>{" "}
+              and, with more of the clinical detail,{" "}
+              <Link href="/quality-of-life/how-to-know-when-to-euthanize-dog" className={linkClass} style={linkStyle}>
+                how to know when to euthanize a dog
+              </Link>
+              . There are pages for{" "}
+              <Link href="/quality-of-life/senior-dog" className={linkClass} style={linkStyle}>
+                an old dog in a slow decline
+              </Link>
+              , for{" "}
+              <Link href="/quality-of-life/when-to-euthanize-dog-with-cancer" className={linkClass} style={linkStyle}>
+                a dog with cancer
+              </Link>
+              , and for{" "}
+              <Link href="/quality-of-life/when-to-euthanize-dog-with-kidney-failure" className={linkClass} style={linkStyle}>
+                a dog with kidney failure
+              </Link>
+              . And when the decision is made, there is a page on{" "}
+              <Link href="/quality-of-life/saying-goodbye-to-your-dog" className={linkClass} style={linkStyle}>
+                saying goodbye to your dog
+              </Link>
+              , for the day before, the day of, and the days after.
+            </p>
+          </div>
+
           <hr
             className="my-14"
             style={{ borderColor: "var(--color-border)" }}
