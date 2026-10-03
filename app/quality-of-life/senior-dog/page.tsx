@@ -82,7 +82,7 @@ export default function Page() {
         </p>
       </Section>
 
-      <QualityOfLifeTool intro="For an old dog, score the week, not the day, and be plain about it. 10 is the dog she was at eight years old. 0 is as bad as it could be. The number is for you and your vet, nobody else." />
+      <QualityOfLifeTool intro="For an old dog, score the week, not the day, and be plain about it. 10 is the dog she was at eight years old. 1 is as bad as it could be. The number is for you and your vet, nobody else." />
 
       <H2>What changes when the decline is slow</H2>
       <Section>

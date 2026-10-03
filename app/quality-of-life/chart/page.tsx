@@ -1,5 +1,5 @@
 import PdfButton from "../_lib/PdfButton";
-import { DIMENSIONS, READINGS } from "../../quality-of-life-scale/types";
+import { BANDS, DIMENSIONS } from "../../quality-of-life-scale/types";
 import {
   A,
   ArticleShell,
@@ -26,7 +26,7 @@ const spec: ArticleSpec = {
     },
     {
       q: "How do I score each box?",
-      a: "0 to 10 for each area, with 10 being a normal good week. Add the column for the week's total out of 70. The full scale page explains each area; the chart assumes you've read it once.",
+      a: "1 to 10 for each area, with 10 being a normal good week. Add the column for the week's total out of 70. The full scale page explains each area; the chart assumes you've read it once.",
     },
     {
       q: "Is a chart better than the online tool?",
@@ -88,7 +88,7 @@ export default function Page() {
                 className="text-left py-2 pr-3"
                 style={{ fontWeight: 600 }}
               >
-                Area (0–10)
+                Area (1–10)
               </th>
               {[1, 2, 3, 4].map((w) => (
                 <th
@@ -142,13 +142,13 @@ export default function Page() {
           </tbody>
         </table>
         <div className="mt-6 space-y-1" style={{ fontSize: 15 }}>
-          {READINGS.map((r) => (
+          {BANDS.map((r) => (
             <p key={r.min}>
               <strong style={{ fontVariantNumeric: "tabular-nums" }}>
                 {r.min}–{r.max}
               </strong>{" "}
               <span style={{ color: "var(--color-text-secondary)" }}>
-                {r.heading}
+                {r.name}
               </span>
             </p>
           ))}
@@ -160,7 +160,7 @@ export default function Page() {
       <Section>
         <p>
           Pick a day of the week and keep it. Sunday evening is common.
-          Score each of the seven areas from zero to ten for the week
+          Score each of the seven areas from one to ten for the week
           that just ended, not for the day you&apos;re sitting in, and
           write the total at the bottom. Then leave it alone until next
           Sunday.

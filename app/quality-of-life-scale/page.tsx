@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import QualityOfLifeTool from "./QualityOfLifeTool";
-import { READINGS } from "./types";
+import { BANDS } from "./types";
 import {
   DESCRIPTION,
   FAQ,
@@ -105,21 +105,30 @@ export default function QualityOfLifeScalePage() {
 
           <QualityOfLifeTool />
 
-          <h2 className="mt-14 mb-6">What the totals have meant for other families</h2>
+          <h2 className="mt-14 mb-6">What the score means</h2>
           <div className="space-y-6">
-            {READINGS.map((r) => (
-              <p key={r.min}>
-                <strong style={{ fontVariantNumeric: "tabular-nums" }}>
-                  {r.min}–{r.max}, {r.heading.toLowerCase()}.
-                </strong>{" "}
-                {r.text}
-              </p>
-            ))}
             <p>
-              Those four bands are ours. Dr. Villalobos&apos;s original scale
-              draws a single line at 35, above which hospice care is still
-              giving the dog an acceptable life. Neither her line nor our
-              bands is a verdict.
+              Seven areas, each scored one to ten, so the week lands
+              somewhere between 7 and 70. The result names the week rather
+              than grading the dog, and it changes with what pulled the
+              score down.
+            </p>
+            <p>
+              {BANDS.map((b, i) => (
+                <span key={b.name}>
+                  <strong style={{ fontVariantNumeric: "tabular-nums" }}>
+                    {b.min}–{b.max}
+                  </strong>{" "}
+                  is {b.name.toLowerCase()}
+                  {i < BANDS.length - 1 ? ". " : "."}
+                </span>
+              ))}{" "}
+              Sixty-one and up means keep the sheet and stop bracing for a
+              while. The fifties mean one area is slipping and is worth
+              watching. The forties mean start keeping sheets. Below 38 is
+              where families book the vet conversation, with the sheet in
+              hand. None of it is a verdict, and the vet is the one who can
+              tell you what it means for your dog.
             </p>
           </div>
 
@@ -216,7 +225,7 @@ export default function QualityOfLifeScalePage() {
               Oncology</em> (Wiley-Blackwell), after years of using it with
               families in her own practice. The letters stand for the seven
               dimensions above, and the original version asks owners to
-              score each from 0 to 10, with a total above 35 suggesting
+              score each from 1 to 10, with a total above 35 suggesting
               that quality of life is acceptable enough to continue hospice
               care.
             </p>

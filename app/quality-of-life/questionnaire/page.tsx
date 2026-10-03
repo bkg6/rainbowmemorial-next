@@ -77,7 +77,7 @@ export default function Page() {
         </p>
       </Section>
 
-      <QualityOfLifeTool intro="Answer for the week just ended, with your dog in front of you. 0 is the worst it could be; 10 is a normal good week. When you're done, download the PDF, date it, and put it with your keys so it comes to the appointment." />
+      <QualityOfLifeTool intro="Answer for the week just ended, with your dog in front of you. 1 is the worst it could be; 10 is a normal good week. When you're done, download the PDF, date it, and put it with your keys so it comes to the appointment." />
 
       <H2>What to ask once you&apos;re there</H2>
       <Section>

@@ -74,7 +74,7 @@ export default function Page() {
         </p>
       </Section>
 
-      <QualityOfLifeTool intro="Seven questions. Slide each one to where this week has honestly been, from 0 (as bad as it could be) to 10 (a normal good week). Your score updates as you go, and nothing is saved unless you download it." />
+      <QualityOfLifeTool intro="Seven questions. Slide each one to where this week has honestly been, from 1 (as bad as it could be) to 10 (a normal good week). Your score updates as you go, and nothing is saved unless you download it." />
 
       <H2>How to answer each one honestly</H2>
       <Section>
@@ -118,12 +118,13 @@ export default function Page() {
       <H2>What the number does and doesn&apos;t mean</H2>
       <Section>
         <p>
-          The total is out of 70. Above about 55 is a good week by this
-          measure. The forties are mixed. Below the high twenties, most of
-          the seven areas are struggling at once. Those four ranges are
-          ours. Dr. Villalobos&apos;s original version draws one line, at
-          35, as the point above which hospice care is still giving the
-          dog an acceptable life.
+          The total runs from 7 to 70, and the result is named rather than
+          graded: a good week, mostly well, a mixed week, a hard week, or a
+          week of struggle. The reading you get points at the areas that
+          pulled the score down, because that is the part you can take to
+          the vet. Those five bands are ours. Dr. Villalobos&apos;s original
+          version draws one line, at 35, as the point above which hospice
+          care is still giving the dog an acceptable life.
         </p>
         <p>
           What the number can&apos;t do is tell you what to do. A score is

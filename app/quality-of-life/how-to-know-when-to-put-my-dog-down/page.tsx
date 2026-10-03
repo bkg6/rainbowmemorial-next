@@ -127,7 +127,7 @@ export default function Page() {
         <p>
           The scale asks about hurt, hunger, hydration, hygiene, happiness,
           mobility, and whether there were more good days than bad. Seven
-          numbers, zero to ten. Nothing clever. The point of it is not the
+          numbers, one to ten. Nothing clever. The point of it is not the
           total. The point is that on the fourth week you have four sheets
           on the kitchen table, and the line they draw is one you
           didn&apos;t draw yourself.

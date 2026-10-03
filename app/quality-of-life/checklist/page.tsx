@@ -26,7 +26,7 @@ const spec: ArticleSpec = {
     },
     {
       q: "What's the difference between this and the quality of life scale?",
-      a: "The scale scores each of the seven areas from 0 to 10 and gives a total. The checklist is yes-or-no, with room to write what you saw. Some people prefer the boxes because a number feels like too much certainty. They measure the same seven things.",
+      a: "The scale scores each of the seven areas from 1 to 10 and gives a total. The checklist is yes-or-no, with room to write what you saw. Some people prefer the boxes because a number feels like too much certainty. They measure the same seven things.",
     },
     {
       q: "Should I fill it in every day?",

@@ -70,7 +70,7 @@ export default function Page() {
           the whole week, whether the good days still outnumber the bad.
         </p>
         <p>
-          Each of those is scored from zero to ten on the{" "}
+          Each of those is scored from one to ten on the{" "}
           <A href="/quality-of-life-scale">
             dog quality of life scale
           </A>

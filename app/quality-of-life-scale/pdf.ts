@@ -1,11 +1,4 @@
-import {
-  DIMENSIONS,
-  READINGS,
-  MAX_TOTAL,
-  readingFor,
-  totalOf,
-  type Score,
-} from "./types";
+import { BANDS, DIMENSIONS, MAX_TOTAL, totalOf, type Score } from "./types";
 
 const INK = { r: 0.165, g: 0.122, b: 0.094 }; // #2A1F18
 const MUTED = { r: 0.478, g: 0.416, b: 0.361 }; // #7A6A5C
@@ -58,7 +51,11 @@ function download(bytes: Uint8Array, filename: string) {
  * One-page portrait score sheet: seven scored dimensions, total, date,
  * and a blank area for notes for the vet. No CTA.
  */
-export async function downloadScoreSheet(score: Score, date = new Date()) {
+export async function downloadScoreSheet(
+  score: Score,
+  date = new Date(),
+  opts: { bandName: string; reading: string }
+) {
   const { PDFDocument, StandardFonts, rgb } = await import("pdf-lib");
   const doc = await PDFDocument.create();
   doc.setTitle("Dog Quality of Life Scale — score sheet");
@@ -93,7 +90,7 @@ export async function downloadScoreSheet(score: Score, date = new Date()) {
   });
   y -= 14;
   page.drawText(
-    "Each area is scored 0 to 10. Higher is better. Built on the HHHHHMM scale by Dr. Alice Villalobos.",
+    "Each area is scored 1 to 10. Higher is better. Built on the HHHHHMM scale by Dr. Alice Villalobos.",
     { x: margin, y, size: 9.5, font: sans, color: muted }
   );
   y -= 26;
@@ -147,15 +144,19 @@ export async function downloadScoreSheet(score: Score, date = new Date()) {
     color: ink,
   });
   y -= 16;
-  const reading = readingFor(total);
-  page.drawText(reading.heading, {
+  page.drawText(opts.bandName, {
     x: margin,
     y,
-    size: 10.5,
+    size: 11,
     font: serifItalic,
     color: muted,
   });
-  y -= 24;
+  y -= 16;
+  for (const line of wrap(opts.reading, width, 9.5, widthOfSans)) {
+    page.drawText(line, { x: margin, y, size: 9.5, font: sans, color: ink });
+    y -= 12;
+  }
+  y -= 12;
 
   page.drawText("Notes for the vet", {
     x: margin,
@@ -220,7 +221,7 @@ export async function downloadBlankChart(weeks = 4) {
   });
   y -= 16;
   page.drawText(
-    "Score each area 0 to 10 once a week. Higher is better. Add the column for the week's total out of 70.",
+    "Score each area 1 to 10 once a week. Higher is better. Add the column for the week's total out of 70.",
     { x: margin, y, size: 9.5, font: sans, color: muted }
   );
   y -= 28;
@@ -306,7 +307,7 @@ export async function downloadBlankChart(weeks = 4) {
     color: ink,
   });
   y -= 15;
-  for (const r of READINGS) {
+  for (const r of BANDS) {
     const range = `${r.min}–${r.max}`;
     page.drawText(range, {
       x: margin,
@@ -315,7 +316,7 @@ export async function downloadBlankChart(weeks = 4) {
       font: sansBold,
       color: ink,
     });
-    page.drawText(r.heading, {
+    page.drawText(r.name, {
       x: margin + 44,
       y,
       size: 9.5,
