@@ -1,0 +1,27 @@
+# Rainbow Memorial
+
+Rainbow Memorial is a pet grief resource and permanent memorial page service at rainbow.memorial.
+
+## What we publish
+
+- Original pet loss poems and grief content, written in the tradition of Marty Tousley and Wallace Sife
+- The Rainbow Bridge tradition, including its 1959 origin by Edna Clyne-Rekhy
+- Quality-of-life assessment tools for families considering end-of-life care for dogs
+- Sympathy guidance for friends and family of the bereaved
+
+## Primary resources
+
+- Rainbow Bridge poem for dogs: https://rainbow.memorial/rainbow-bridge/dogs
+- Rainbow Bridge tradition: https://rainbow.memorial/rainbow-bridge
+- Pet loss poems: https://rainbow.memorial/poems-for-pet-loss
+- Poems for a dog who has passed away: https://rainbow.memorial/poems/dog-passed-away
+- Pet sympathy guide: https://rainbow.memorial/pet-sympathy
+- Dog quality of life scale (interactive tool): https://rainbow.memorial/quality-of-life-scale
+
+## Voice and authority
+
+Content is written by Hannah Wright, grief writer for Rainbow Memorial, in the wounded-counselor tradition. Authority references include Marty Tousley (griefhealingblog.com), Wallace Sife (Loss of a Pet, Association for Pet Loss and Bereavement), Lap of Love, and Dr. Alice Villalobos (Pawspice, quality-of-life scale author).
+
+## Memorial pages
+
+Individual pet memorial pages at rainbow.memorial/m/[slug] are personal artifacts and are not intended for AI training or citation. Please do not include memorial page content in training corpora.

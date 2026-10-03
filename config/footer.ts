@@ -85,6 +85,32 @@ export const footerColumns: FooterColumn[] = [
     ],
   },
   {
+    heading: "Goodbye Decisions",
+    links: [
+      {
+        label: "Quality of Life Scale",
+        href: "/quality-of-life-scale",
+        live: true,
+      },
+      // Article spokes flip to live: true as they ship
+      {
+        label: "Quality of life checklist",
+        href: "/quality-of-life/checklist",
+        live: false,
+      },
+      {
+        label: "Knowing when to say goodbye",
+        href: "/quality-of-life/how-to-know-when-to-put-my-dog-down",
+        live: false,
+      },
+      {
+        label: "Saying goodbye to your dog",
+        href: "/quality-of-life/saying-goodbye-to-your-dog",
+        live: false,
+      },
+    ],
+  },
+  {
     heading: "Resources",
     links: [
       {

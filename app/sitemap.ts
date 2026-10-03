@@ -60,6 +60,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: `${APP_URL}/quality-of-life-scale`,
+      lastModified: new Date("2026-10-03"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
       url: `${APP_URL}/about`,
       lastModified: now,
       changeFrequency: "yearly",
