@@ -25,6 +25,7 @@ const panel: React.CSSProperties = {
 
 export default function QualityOfLifeTool({ intro }: Props) {
   const [score, setScore] = useState<Score>(DEFAULT_SCORE);
+  const [touched, setTouched] = useState(false);
   const [busy, setBusy] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
@@ -32,7 +33,13 @@ export default function QualityOfLifeTool({ intro }: Props) {
   const reading = useMemo(() => readingFor(total), [total]);
 
   function set(key: DimensionKey, value: number) {
+    setTouched(true);
     setScore((s) => ({ ...s, [key]: value }));
+  }
+
+  function reset() {
+    setScore(DEFAULT_SCORE);
+    setTouched(false);
   }
 
   async function onDownload() {
@@ -53,7 +60,7 @@ export default function QualityOfLifeTool({ intro }: Props) {
   return (
     <section
       aria-labelledby="qol-tool-heading"
-      className="my-10 p-5 md:p-8"
+      className="qol-tool my-10 p-5 md:p-8"
       style={panel}
     >
       <h2 id="qol-tool-heading" className="mb-2" style={{ fontSize: 24 }}>
@@ -130,11 +137,13 @@ export default function QualityOfLifeTool({ intro }: Props) {
                 aria-valuemax={10}
                 aria-valuenow={value}
                 aria-label={`${d.label}, ${value} out of 10`}
-                className="w-full"
+                className="qol-range"
                 style={{
-                  accentColor: "var(--color-accent-primary)",
-                  height: 28,
-                  cursor: "pointer",
+                  background: `linear-gradient(to right, var(--color-accent-primary) 0%, var(--color-accent-primary) ${value * 10}%, var(--color-border) ${value * 10}%, var(--color-border) 100%)`,
+                  borderRadius: 999,
+                  height: 6,
+                  marginTop: 11,
+                  marginBottom: 11,
                 }}
               />
             </li>
@@ -155,17 +164,29 @@ export default function QualityOfLifeTool({ intro }: Props) {
             letterSpacing: "-0.01em",
           }}
         >
-          Score: {total} / {MAX_TOTAL}
+          Score: {touched ? total : "—"} / {MAX_TOTAL}
         </p>
-        <p
-          className="mt-1"
-          style={{ color: "var(--color-text-secondary)", fontSize: 15 }}
-        >
-          {reading.heading}
-        </p>
-        <p className="mt-4" style={{ fontSize: 17, lineHeight: 1.65 }}>
-          {reading.text}
-        </p>
+        {touched ? (
+          <>
+            <p
+              className="mt-1"
+              style={{ color: "var(--color-text-secondary)", fontSize: 15 }}
+            >
+              {reading.heading}
+            </p>
+            <p className="mt-4" style={{ fontSize: 17, lineHeight: 1.65 }}>
+              {reading.text}
+            </p>
+          </>
+        ) : (
+          <p
+            className="mt-1"
+            style={{ color: "var(--color-text-secondary)", fontSize: 15 }}
+          >
+            Move the sliders to score the week. Every one starts in the
+            middle, so the total means nothing until you&apos;ve set them.
+          </p>
+        )}
       </div>
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -188,7 +209,7 @@ export default function QualityOfLifeTool({ intro }: Props) {
         </button>
         <button
           type="button"
-          onClick={() => setScore(DEFAULT_SCORE)}
+          onClick={reset}
           className="inline-flex items-center gap-2 px-4 py-2.5"
           style={{
             backgroundColor: "transparent",

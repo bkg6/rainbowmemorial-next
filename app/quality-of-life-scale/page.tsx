@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import QualityOfLifeTool from "./QualityOfLifeTool";
+import { READINGS } from "./types";
 import {
   DESCRIPTION,
   FAQ,
@@ -103,6 +104,24 @@ export default function QualityOfLifeScalePage() {
           </p>
 
           <QualityOfLifeTool />
+
+          <h2 className="mt-14 mb-6">What the totals have meant for other families</h2>
+          <div className="space-y-6">
+            {READINGS.map((r) => (
+              <p key={r.min}>
+                <strong style={{ fontVariantNumeric: "tabular-nums" }}>
+                  {r.min}–{r.max}, {r.heading.toLowerCase()}.
+                </strong>{" "}
+                {r.text}
+              </p>
+            ))}
+            <p>
+              Those four bands are ours. Dr. Villalobos&apos;s original scale
+              draws a single line at 35, above which hospice care is still
+              giving the dog an acceptable life. Neither her line nor our
+              bands is a verdict.
+            </p>
+          </div>
 
           <h2 className="mt-14 mb-6">When to use this scale</h2>
           <div className="space-y-6">
